@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mi-ws>
+	<ficheroOk>registroOK.txt</ficheroOk>
+	<ficheroError>registroError.txt</ficheroError>
+	<ficheroCSVOK>Excel_registros_ok.csv</ficheroCSVOK>
+	<ficheroCSVERRORPETICION>Excel_registros_error.csv</ficheroCSVERRORPETICION>
+	<ficheroCSVERROREJECUCION>error_ejecucion.csv</ficheroCSVERROREJECUCION>
+	<pathCSVRegistros>D:/Exit</pathCSVRegistros>
+	<url>https://qbe.custhelp.com/services/rest/connect/v1.3/contacts/</url>
+	<method>POST</method>
+	<content-type>application/json</content-type>
+	<user>lucas.segura</user>
+	<acction>UPDATE_CONTACTOS</acction>
+	<password>Lucas.segura</password>
+	<separadorCSV>;</separadorCSV>
+	<nivelParalelismo>10</nivelParalelismo>
+
+</mi-ws>

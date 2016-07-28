@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mi-ftp>
+	<servidor>www.total01.ferozo.net</servidor>
+	<puerto>21</puerto>
+	<user>total01</user>
+	<pass>T0t4lt3x</pass>
+	<directorioDescarga>D:/Exit/QBE/donwloadFTP/tmp.csv</directorioDescarga>
+	<archivo>/clientes.csv</archivo>
+	<archivo>/clientes2.csv</archivo>
+</mi-ftp>
