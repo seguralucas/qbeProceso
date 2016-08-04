@@ -1,4 +1,4 @@
-package exit.services.principal;
+package exit.services.principal.peticiones;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -11,8 +11,10 @@ import java.net.HttpURLConnection;
 
 import exit.services.json.JSONHandler;
 import exit.services.parser.ParserXMLWSConnector;
+import exit.services.principal.Separadores;
+import exit.services.principal.WSConector;
 import exit.services.procesadoresRespuesta.IProcesarRespuesta;
-import exit.services.procesadoresRespuesta.ProcesarRespuestaUPDATE;
+import exit.services.procesadoresRespuesta.ProcesarRespuestaUPDATEContactos;
 
 public class UpdatearContacto {
 	IProcesarRespuesta iProcesarRespuesta;
@@ -21,18 +23,21 @@ public class UpdatearContacto {
 	        try{
 	        	
 	        	WSConector ws = new WSConector("https://qbe.custhelp.com/services/rest/connect/v1.3/contacts?q=customFields.Qbe.IdAIS='"+clientSec+"'", /*ParserXMLWSConnector.getInstance().getUrl()+"/"+clientSec*/ "GET");
-	        	iProcesarRespuesta= new ProcesarRespuestaUPDATE();
+	        	iProcesarRespuesta= new ProcesarRespuestaUPDATEContactos();
 	        	HttpURLConnection conn=ws.getConexion();
 	            int responseCode = conn.getResponseCode();
 	            BufferedReader in;
 	            if(responseCode == 200){
 	            	in = new BufferedReader(
 		                    new InputStreamReader(conn.getInputStream()));
-	            	iProcesarRespuesta.procesarPeticionOK(in, json,responseCode);
+	            	ProcesarRespuestaUPDATEContactos a= new ProcesarRespuestaUPDATEContactos();
+	            	a.borrarMetodo(in, json, responseCode, clientSec);
+	            	//iProcesarRespuesta.procesarPeticionOK(in, json,responseCode);
 	            	
 	            }
 	            else{
-	            	in = new BufferedReader(
+	    	     	System.out.println("Error: "+clientSec);
+	            in = new BufferedReader(
 		                    new InputStreamReader(conn.getErrorStream()));
 	            	iProcesarRespuesta.procesarPeticionError(in,json,responseCode);
 	            }

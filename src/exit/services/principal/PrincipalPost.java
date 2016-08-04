@@ -4,16 +4,20 @@ package exit.services.principal;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+
 import exit.services.parser.ParserXMLWSConnector;
+import exit.services.principal.ejecutores.EjecutorInsercionContactos;
+import exit.services.principal.ejecutores.EjecutorInsercionIncidentes;
+import exit.services.principal.ejecutores.EjecutorUpdateContactosDistintosFicheros;
 
 public class PrincipalPost {
 	public static final String UPDATE_CONTACTOS="UPDATE_CONTACTOS";
 	public static final String INSERTAR_CONTACTOS="INSERTAR_CONTACTOS";
+	public static final String INSERTAR_INCIDENTES="INSERTAR_INCIDENTES";
 	
 	public static void main(String[] args) throws IOException {
 		
 
-		
 		/***********************************************************/
 		//***Ejecucion Paralela***/
 /***********************************************************/
@@ -22,7 +26,7 @@ public class PrincipalPost {
     	if(ParserXMLWSConnector.getInstance().getAcction().equalsIgnoreCase(UPDATE_CONTACTOS)){
 	    	EjecutorUpdateContactosDistintosFicheros ejecutoUpdateContactos = new EjecutorUpdateContactosDistintosFicheros();
 	    	try {
-				ejecutoUpdateContactos.updatear();
+			//	ejecutoUpdateContactos.updatear();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -37,7 +41,7 @@ public class PrincipalPost {
     	}
     	else if(ParserXMLWSConnector.getInstance().getAcction().equalsIgnoreCase(INSERTAR_CONTACTOS)){
 	    	EjecutorInsercionContactos hiloApartre = new EjecutorInsercionContactos();
-	    	hiloApartre.start();
+	    //	hiloApartre.start();
 	        synchronized(hiloApartre){
 	            try{
 	                hiloApartre.wait();
@@ -51,6 +55,21 @@ public class PrincipalPost {
 	    	System.out.println(ManagementFactory.getThreadMXBean().getThreadCount() );
 	    	System.out.println("Creación de threads terminada. Tiempo: "+ ( time_end - time_start ) +" milliseconds");
     	}
+    	else if(ParserXMLWSConnector.getInstance().getAcction().equalsIgnoreCase(INSERTAR_INCIDENTES)){
+    		EjecutorInsercionIncidentes hiloApartre = new EjecutorInsercionIncidentes();
+	      	try {
+	      		hiloApartre.insertar();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	    	time_end = System.currentTimeMillis();
+	    	System.out.println(ManagementFactory.getThreadMXBean().getThreadCount() );
+	    	double tiempoDemorado=(time_end - time_start)/1000/60 ;
+    		if(tiempoDemorado>1){
+        		FileWriter fw = new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio("duracion.txt"));
+    			fw.write("El proceso de updateo demoró un total de: "+tiempoDemorado+" minutos");
+        		fw.close();
+    		}    	}
     	
 /***********************************************************/
 		//***Ejecucion secuencial***/

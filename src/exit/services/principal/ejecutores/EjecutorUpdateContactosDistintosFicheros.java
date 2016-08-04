@@ -1,4 +1,4 @@
-package exit.services.principal;
+package exit.services.principal.ejecutores;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,9 +12,12 @@ import java.util.concurrent.Executors;
 import exit.services.fileHandler.CSVHandlerUpdate;
 import exit.services.fileHandler.ConvertidosJSONCSV;
 import exit.services.json.JSONHandler;
-import exit.services.json.JsonRestEstructura;
+import exit.services.json.JsonRestClienteEstructura;
 import exit.services.json.TipoTarea;
 import exit.services.parser.ParserXMLWSConnector;
+import exit.services.principal.DirectorioManager;
+import exit.services.principal.ExceptionLongitud;
+import exit.services.principal.peticiones.UpdatearContacto;
 import exit.services.util.Contador;
 
 public class EjecutorUpdateContactosDistintosFicheros {
@@ -40,7 +43,7 @@ public class EjecutorUpdateContactosDistintosFicheros {
 	        	ConvertidosJSONCSV csvThread= new ConvertidosJSONCSV();
 	        	try {
 	        		JSONHandler jsonH=null;
-	        		JsonRestEstructura jsonEst=null;
+	        		JsonRestClienteEstructura jsonEst=null;
 	        		while(!csvThread.isFin()){
 		        		boolean excepcion=false;
 	        			jsonEst = csvThread.convertirCSVaArrayListJSONLineaALinea(file);
@@ -55,6 +58,7 @@ public class EjecutorUpdateContactosDistintosFicheros {
 	    				if(!excepcion){
 	    					try{
 	    	    	        String clientSecAux= jsonEst.getCliensec();
+	    	    	        //System.out.println(clientSecAux);
 	    					update.realizarPeticion(clientSecAux,jsonH);
 	    					}
 	    					catch(Exception e){
@@ -68,7 +72,7 @@ public class EjecutorUpdateContactosDistintosFicheros {
 	    					
 	    				}
 	    				Contador.x++;
-	    				System.out.println(Contador.x);
+	    				//System.out.println(Contador.x);
 	    				if(Contador.x%1000==0){
 	    			  		FileWriter fw = new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio("cantidadProcesada.txt"));
 	    		    		fw.write("el proceso lleva procesado un total de: "+Contador.x+" Registros");
@@ -89,7 +93,7 @@ public class EjecutorUpdateContactosDistintosFicheros {
 	    }
 	    workers.invokeAll(tasks);
 	    workers.shutdown();
-	    path.delete();
+	//    path.delete();
  		}
 	}
 }

@@ -6,12 +6,12 @@
 	<ficheroCSVERRORPETICION>Excel_registros_error.csv</ficheroCSVERRORPETICION>
 	<ficheroCSVERROREJECUCION>error_ejecucion.csv</ficheroCSVERROREJECUCION>
 	<pathCSVRegistros>D:/Exit</pathCSVRegistros>
-	<url>https://qbe.custhelp.com/services/rest/connect/v1.3/contacts/</url>
+	<url>https://qbe.custhelp.com/services/rest/connect/v1.3/incidents</url>
 	<method>POST</method>
 	<content-type>application/json</content-type>
-	<user>lucas.segura</user>
-	<acction>UPDATE_CONTACTOS</acction>
-	<password>Lucas.segura</password>
+	<user>usuario.importador</user>
+	<acction>INSERTAR_INCIDENTES</acction>
+	<password>Lucas123</password>
 	<separadorCSV>;</separadorCSV>
 	<nivelParalelismo>10</nivelParalelismo>
 

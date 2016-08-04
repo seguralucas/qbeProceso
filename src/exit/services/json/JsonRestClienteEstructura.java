@@ -10,7 +10,7 @@ import com.csvreader.CsvWriter;
 import exit.services.fileHandler.CSVHandlerUpdate;
 import exit.services.principal.ExceptionLongitud;
 
-public class JsonRestEstructura {
+public class JsonRestClienteEstructura implements IJsonRestEstructura{
 	/*************************************/
 	private String pathError;
 	
@@ -40,13 +40,14 @@ public class JsonRestEstructura {
 	private String	registro;
 	private String	user_name;
 	private String	fecha_alta;
-	private String  line;
 	private String	tel_oficina;
 	private String	tel_personal;
 	/***********************************************/
 	private JSONHandler json;
+	private String  line;
 
-	public JsonRestEstructura(String pathError){
+
+	public JsonRestClienteEstructura(String pathError){
 		this.pathError=pathError;
 	}
 	
@@ -301,41 +302,7 @@ public class JsonRestEstructura {
 		return false;
 	}
 	
-	
-	private Boolean insertarTrueOFalse(String valor){
-		if(valor == null)
-			return null;
-		if (valor.equalsIgnoreCase("si") || valor.equalsIgnoreCase("true") || valor.equalsIgnoreCase("verdadero"))
-			return true;
-		else if(valor.equalsIgnoreCase("no") || valor.equalsIgnoreCase("false") || valor.equalsIgnoreCase("false"))
-			return false;
-		else 
-			return null;
-	}
-	
-	private String insertarFecha(String valor) throws ExceptionLongitud{
-		if(valor==null || valor.length()==0)
-			return null;
-		String[] fecha=valor.split("/");
-		try{
-			return fecha[2]+"-"+fecha[1]+"-"+fecha[0];
-		}
-		catch(Exception e){
-			CSVHandlerUpdate csv= new CSVHandlerUpdate();
-			try {
-				csv.escribirCSV(this.pathError, line);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			throw new ExceptionLongitud();
-		}
-	}
-	private String insertarString(String valor){
-		
-		if(valor == null || valor.length()==0)
-			return null;
-		return valor;
-	}
+
 
 	public String getId_cliente() {
 		return id_cliente;
@@ -536,9 +503,11 @@ public class JsonRestEstructura {
 	public void setFecha_alta(String fecha_alta) {
 		this.fecha_alta = fecha_alta;
 	}
+	@Override
 	public String getLine() {
 		return line;
 	}
+	@Override
 	public void setLine(String line) {
 		this.line = line;
 	}
@@ -553,6 +522,11 @@ public class JsonRestEstructura {
 	}
 	public void setTel_personal(String tel_personal) {
 		this.tel_personal = tel_personal;
+	}
+
+	@Override
+	public String getPathError() {
+		return this.getPathError();
 	}
 	
 	

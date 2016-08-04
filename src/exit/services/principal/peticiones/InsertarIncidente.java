@@ -1,4 +1,4 @@
-package exit.services.principal;
+package exit.services.principal.peticiones;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,24 +10,25 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 
-
 import exit.services.json.JSONHandler;
 import exit.services.parser.ParserXMLWSConnector;
+import exit.services.principal.Separadores;
+import exit.services.principal.WSConector;
 import exit.services.procesadoresRespuesta.IProcesarRespuesta;
 import exit.services.procesadoresRespuesta.ProcesarRespuestaInsercionContactos;
+import exit.services.procesadoresRespuesta.ProcesarResputaInsercionIncidentes;
 
-public class InsertarContacto {
-	
+public class InsertarIncidente {
 	IProcesarRespuesta iProcesarRespuesta;
 	
 	 public BufferedReader realizarPeticion(JSONHandler json){
 	        try{
 	        	WSConector ws = new WSConector("POST",ParserXMLWSConnector.getInstance().getUrl(),"application/json");
-	        	iProcesarRespuesta= new ProcesarRespuestaInsercionContactos();
+	        	iProcesarRespuesta= new ProcesarResputaInsercionIncidentes();
 	        	HttpURLConnection conn=ws.getConexion();
 	        	DataOutputStream wr = new DataOutputStream(
 	        			conn.getOutputStream());
-	        	wr.write(json.toStringSinEnter().getBytes("UTF-8"));
+	        	wr.write(json.toStringNormal().getBytes("UTF-8"));
 	        	wr.flush();
 	        	wr.flush();
 	        	wr.close();
@@ -44,7 +45,7 @@ public class InsertarContacto {
 		                    new InputStreamReader(conn.getErrorStream()));
 	            	iProcesarRespuesta.procesarPeticionError(in,json,responseCode);
 	            }
-           
+          
 	            return in;	 
 	            }	                
 	            catch (Exception e) {
@@ -56,8 +57,8 @@ public class InsertarContacto {
 	 
 	 
 	private void escrobirErrorAplicacion(JSONHandler json,StackTraceElement[] stackArray){
-  	File fichero = new File(ParserXMLWSConnector.getInstance().getFicheroError()); 
-     PrintWriter out;
+ 	File fichero = new File(ParserXMLWSConnector.getInstance().getFicheroError()); 
+    PrintWriter out;
 
 		try {
 			out = new PrintWriter(new BufferedWriter(new FileWriter(fichero, true)));
@@ -65,13 +66,11 @@ public class InsertarContacto {
 			for(StackTraceElement ste: stackArray){
 				out.write("FileName: "+ste.getFileName()+" Metodo: "+ste.getMethodName()+"Clase "+ste.getClassName()+" Linea "+ste.getLineNumber());
 			}		
-         out.println(Separadores.SEPARADOR_ERROR_TRYCATCH);
+        out.println(Separadores.SEPARADOR_ERROR_TRYCATCH);
 			} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 
 	}
-	
-
 }

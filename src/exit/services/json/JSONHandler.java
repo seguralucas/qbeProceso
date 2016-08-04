@@ -5,7 +5,9 @@ import org.json.simple.JSONObject;
 public class JSONHandler extends JSONObject{
 	
 	private String line;
-	private JsonRestEstructura jsonRestEstructura;
+	
+	private JsonRestClienteEstructura jsonRestEstructura;
+	private JsonRestIncidentes jsonRestIncidentes;
 	
 	
 	public String getLine() {
@@ -18,11 +20,19 @@ public class JSONHandler extends JSONObject{
 	
 	
 
-	public JsonRestEstructura getJsonRestEstructura() {
+	public JsonRestIncidentes getJsonRestIncidentes() {
+		return jsonRestIncidentes;
+	}
+
+	public void setJsonRestIncidentes(JsonRestIncidentes jsonRestIncidentes) {
+		this.jsonRestIncidentes = jsonRestIncidentes;
+	}
+
+	public JsonRestClienteEstructura getJsonRestEstructura() {
 		return jsonRestEstructura;
 	}
 
-	public void setJsonRestEstructura(JsonRestEstructura jsonRestEstructura) {
+	public void setJsonRestEstructura(JsonRestClienteEstructura jsonRestEstructura) {
 		this.jsonRestEstructura = jsonRestEstructura;
 	}
 
@@ -34,5 +44,9 @@ public class JSONHandler extends JSONObject{
 	
 	public String toStringSinEnter(){
 		return super.toString().replace("\\", "");
+	}
+	
+	public String toStringNormal(){
+		return super.toString();
 	}
 }

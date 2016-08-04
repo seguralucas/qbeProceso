@@ -20,19 +20,46 @@ import exit.services.json.TipoTarea;
 import exit.services.parser.ParserXMLWSConnector;
 import exit.services.principal.DirectorioManager;
 import exit.services.principal.ExceptionLongitud;
-import exit.services.principal.InsertarContacto;
 import exit.services.principal.Separadores;
 import exit.services.principal.WSConector;
+import exit.services.principal.peticiones.InsertarContacto;
 
-public class ProcesarRespuestaUPDATE implements IProcesarRespuesta{
+public class ProcesarRespuestaUPDATEContactos implements IProcesarRespuesta{
 	 private ParserXMLWSConnector parser;
 	 
-	 public ProcesarRespuestaUPDATE(){
+	 public ProcesarRespuestaUPDATEContactos(){
 		 this.parser=ParserXMLWSConnector.getInstance();
 	 }
+	 
+		public void borrarMetodo(BufferedReader in, JSONHandler json, int responseCode,String clientSec) throws Exception {
+
+			String line;
+			JSONParser parser = new JSONParser();
+			StringBuilder builder = new StringBuilder();
+	        while ((line = in.readLine()) != null) {
+	            builder.append(line);
+	        }
+	        String jsonString = builder.toString();
+			JSONObject jsonObject = (JSONObject) parser.parse(jsonString);
+			JSONArray jsonArrayItems= (JSONArray) jsonObject.get(("items"));
+			JSONObject jsonItems;
+			try{
+				jsonItems=(JSONObject)jsonArrayItems.get(0);
+			}
+			catch(Exception e){
+				System.out.println("ClientSec no encontrado, se procederá a insertar "+clientSec );
+//				insertarContacto(json);
+				return;
+			}
+			Long id= (Long)jsonItems.get("id");
+			System.out.println(id+";"+clientSec);
+			//realizarPeticion(json,String.valueOf(id));
+		}
 	
 	@Override
 	public void procesarPeticionOK(BufferedReader in, JSONHandler json, int responseCode) throws Exception {
+		System.out.println("ok");
+
 		String line;
 		JSONParser parser = new JSONParser();
 		StringBuilder builder = new StringBuilder();
@@ -52,13 +79,15 @@ public class ProcesarRespuestaUPDATE implements IProcesarRespuesta{
 			return;
 		}
 		Long id= (Long)jsonItems.get("id");
-		System.out.println(id);
-		realizarPeticion(json,String.valueOf(id));
+		JSONHandler qbe = (JSONHandler)((JSONHandler)json.get("customFields")).get("Qbe");
+		 String clientSec=(String)qbe.get("IdBI");
+		System.out.println(id+"");
+		//realizarPeticion(json,String.valueOf(id));
 	}
 
 	@Override
 	public void procesarPeticionError(BufferedReader in, JSONHandler json, int responseCode) throws Exception{
-	     	File fichero = DirectorioManager.getDirectorioFechaYHoraInicio(parser.getFicheroError().replace(".txt", "_"+responseCode+".txt")); 
+			/*File fichero = DirectorioManager.getDirectorioFechaYHoraInicio(parser.getFicheroError().replace(".txt", "_"+responseCode+".txt")); 
 	        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fichero, true)));
             out.println(json.toString());
             String inputLine;
@@ -73,7 +102,7 @@ public class ProcesarRespuestaUPDATE implements IProcesarRespuesta{
 	        out = new PrintWriter(new BufferedWriter(new FileWriter(fichero, true)));
             out.println(json.toString());
             out.println(Separadores.SEPARADOR_ERROR_PETICION);
-            out.close();
+            out.close();*/
 		 }
 	
 	private void insertarContacto(JSONHandler jsonHandlerUpdate){

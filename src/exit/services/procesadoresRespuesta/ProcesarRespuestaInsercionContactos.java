@@ -38,7 +38,7 @@ public class ProcesarRespuestaInsercionContactos implements IProcesarRespuesta{
         	}
         }
         CSVHandlerUpdate csvHandler = new CSVHandlerUpdate();
-        csvHandler.escribirCSVInsercion(parser.getFicheroCSVOK().replace(".csv", "_insertado_ok.csv"),json,id);
+        csvHandler.escribirCSVInsercionContacto(parser.getFicheroCSVOK().replace(".csv", "_insertado_ok.csv"),json,id);
         //out.println(SEPARADOR_ERROR_PETICION);
         //out.close();
 	 }

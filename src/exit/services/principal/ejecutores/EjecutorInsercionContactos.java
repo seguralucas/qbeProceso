@@ -1,4 +1,4 @@
-package exit.services.principal;
+package exit.services.principal.ejecutores;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -8,10 +8,15 @@ import java.util.concurrent.Executors;
 
 import exit.services.fileHandler.CSVHandlerUpdate;
 import exit.services.fileHandler.ConvertidosJSONCSV;
+import exit.services.fileHandler.Tipo_Json;
+import exit.services.json.IJsonRestEstructura;
 import exit.services.json.JSONHandler;
-import exit.services.json.JsonRestEstructura;
+import exit.services.json.JsonRestClienteEstructura;
 import exit.services.json.TipoTarea;
 import exit.services.parser.ParserXMLWSConnector;
+import exit.services.principal.ExceptionLongitud;
+import exit.services.principal.WSConector;
+import exit.services.principal.peticiones.InsertarContacto;
 import exit.services.util.Contador;
 import exit.services.util.Timer;
 
@@ -29,18 +34,20 @@ public class EjecutorInsercionContactos extends Thread{
 	    		for(File path:pathsCSV){
 	    			System.out.println( path.getName() );
 	    		 	ConvertidosJSONCSV jsonHandler = new ConvertidosJSONCSV();
-	    			jsonHandler.convertirCSVaArrayListJSON(path);
+	    			jsonHandler.convertirCSVaArrayListJSON(path,Tipo_Json.CLIENTE);
 	    				//System.out.println(json.createJson());
 	    	        	CountDownLatch latch = new CountDownLatch(ParserXMLWSConnector.getInstance().getNivelParalelismo());
 	    	        	ExecutorService exec = Executors.newFixedThreadPool(ParserXMLWSConnector.getInstance().getNivelParalelismo());
 	    	        	try {
+	    	        		
 		    	        	int i=0;
-	    	    			for(JsonRestEstructura json: jsonHandler.getListaJson()){
+	    	    			for(IJsonRestEstructura jsonI: jsonHandler.getListaJson()){
 	    	        	        exec.submit(new Runnable() {
 	    	        	            @Override
 	    	        	            public void run() {	  
 	    	        	            	WSConector wsCon;
 										try {
+						    	        	JsonRestClienteEstructura json=(JsonRestClienteEstructura)jsonI;
 											System.out.println(Contador.x++);
 											
 											

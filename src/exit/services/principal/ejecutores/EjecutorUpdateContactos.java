@@ -1,4 +1,4 @@
-package exit.services.principal;
+package exit.services.principal.ejecutores;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,10 +10,14 @@ import java.util.concurrent.Executors;
 
 import exit.services.fileHandler.CSVHandlerUpdate;
 import exit.services.fileHandler.ConvertidosJSONCSV;
+import exit.services.fileHandler.Tipo_Json;
+import exit.services.json.IJsonRestEstructura;
 import exit.services.json.JSONHandler;
-import exit.services.json.JsonRestEstructura;
+import exit.services.json.JsonRestClienteEstructura;
 import exit.services.json.TipoTarea;
 import exit.services.parser.ParserXMLWSConnector;
+import exit.services.principal.ExceptionLongitud;
+import exit.services.principal.peticiones.UpdatearContacto;
 import exit.services.util.Contador;
 
 public class EjecutorUpdateContactos{
@@ -23,13 +27,14 @@ public class EjecutorUpdateContactos{
 	 	ArrayList<File> pathsCSV= csv.getCSVAEjecutar(ParserXMLWSConnector.getInstance().getPathCSVRegistros());
 	 	for(File path:pathsCSV){
 		 	ConvertidosJSONCSV jsonHandler = new ConvertidosJSONCSV();
-			jsonHandler.convertirCSVaArrayListJSON(path);
+			jsonHandler.convertirCSVaArrayListJSON(path,Tipo_Json.CLIENTE);
         	ExecutorService workers = Executors.newFixedThreadPool(ParserXMLWSConnector.getInstance().getNivelParalelismo());      	
         	//System.out.println(ParserXMLWSConnector.getInstance().getNivelParalelismo());
     	    List<Callable<Void>> tasks = new ArrayList<>();
-			for(JsonRestEstructura json: jsonHandler.getListaJson()){
+			for(IJsonRestEstructura jsonI: jsonHandler.getListaJson()){
 				tasks.add(new Callable<Void>() {
     	        public Void call() {
+    	        	JsonRestClienteEstructura json=(JsonRestClienteEstructura)jsonI;
     	        	String clientSecAux= json.getCliensec();
 					boolean excepcion= false;
 					UpdatearContacto update= new UpdatearContacto();

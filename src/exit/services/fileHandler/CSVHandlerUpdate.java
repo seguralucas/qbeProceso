@@ -10,6 +10,7 @@ import org.json.simple.JSONArray;
 import com.csvreader.CsvWriter;
 
 import exit.services.json.JSONHandler;
+import exit.services.json.JsonRestIncidentes;
 import exit.services.parser.ParserXMLWSConnector;
 import exit.services.principal.DirectorioManager;
 
@@ -89,11 +90,11 @@ public class CSVHandlerUpdate {
 		            csvOutput.close();	      
 		 }
 		 
-	 public void escribirCSVInsercion(String path,JSONHandler json, String id) throws IOException{
+	 public void escribirCSVInsercionContacto(String path,JSONHandler json, String id) throws IOException{
 	 	CsvWriter csvOutput = new CsvWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio(path), true), ';');
         File aux = DirectorioManager.getDirectorioFechaYHoraInicio(path);
         if(!aux.exists() || aux.length() == 0){
-        	crearCabecerInsercion(csvOutput);
+        	crearCabecerInsercionContacto(csvOutput);
         }
          JSONHandler qbe = (JSONHandler)((JSONHandler)json.get("customFields")).get("Qbe");
          JSONHandler contactType = ((JSONHandler)json.get("contactType"));
@@ -137,6 +138,27 @@ public class CSVHandlerUpdate {
          csvOutput.endRecord();
          csvOutput.close();	      
 	 }
+	 
+	 public void escribirCSVInsercionIncidentes(String path,JSONHandler json, String id) throws IOException{
+		 	CsvWriter csvOutput = new CsvWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio(path), true), ';');
+	        File aux = DirectorioManager.getDirectorioFechaYHoraInicio(path);
+	        if(!aux.exists() || aux.length() == 0)
+	        	crearCabecerInsercionIncidente(csvOutput);
+	         JsonRestIncidentes jsonRestIncidentes= json.getJsonRestIncidentes();
+	         JSONHandler qbe = (JSONHandler)((JSONHandler)json.get("customFields")).get("Qbe");
+	         csvOutput.write(id);
+	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getId()));        
+	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getNro_sac()));  
+	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getModo_contacto()));
+	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getCausa()));
+	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getProducto()));
+	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getMotivo()));
+	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getEstado()));
+	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getSector_responsable()));
+	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getHilo_conversacion_antiguo()));
+	         csvOutput.endRecord();
+	         csvOutput.close();	      
+		 }
 		 private void insertarEmails(JSONArray emails, CsvWriter csvOutput) throws IOException{
 	    	 String email1=null;
 	    	 String email2=null;
@@ -206,7 +228,7 @@ public class CSVHandlerUpdate {
         	 csvOutput.write(insertarNoNull(""));
 		 }
 		 
-			private void crearCabecerInsercion(CsvWriter csvOutput) throws IOException{
+			private void crearCabecerInsercionContacto(CsvWriter csvOutput) throws IOException{
 				csvOutput.write("ID_RIGHTNOW");
 		        csvOutput.write("ID_CLIENTE");
 		        csvOutput.write("CLIENSEC");
@@ -238,7 +260,12 @@ public class CSVHandlerUpdate {
 		        csvOutput.endRecord();
 			}
 			
-		 
+			private void crearCabecerInsercionIncidente(CsvWriter csvOutput) throws IOException{
+				String [] cabeceras= {"ID_RIGHTNOW","ID","NRO_SAC","MODO_CONTACTO","CAUSA","PRODUCTO","MOTIVO","ESTADO","SECTOR_RESPONSABLE","HILO_CONVERSACION"};
+				for(int i=0;i<cabeceras.length;i++)
+					csvOutput.write(cabeceras[i]);
+		        csvOutput.endRecord();
+			}
 		 private String insertarNoNull(String cadena){
 			 if(cadena!=null)
 				 return cadena;
