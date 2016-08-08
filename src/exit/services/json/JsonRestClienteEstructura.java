@@ -7,8 +7,8 @@ import org.json.simple.JSONObject;
 
 import com.csvreader.CsvWriter;
 
+import exit.services.excepciones.ExceptionLongitud;
 import exit.services.fileHandler.CSVHandlerUpdate;
-import exit.services.principal.ExceptionLongitud;
 
 public class JsonRestClienteEstructura implements IJsonRestEstructura{
 	/*************************************/

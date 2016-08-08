@@ -4,7 +4,10 @@ import java.util.HashMap;
 
 import org.json.simple.JSONArray;
 
-import exit.services.principal.ExceptionLongitud;
+import exit.services.excepciones.ExceptionEstadoInvalido;
+import exit.services.excepciones.ExceptionIDNullIncidente;
+import exit.services.excepciones.ExceptionLongitud;
+import exit.services.excepciones.ExceptionTipoIncidenteInvalido;
 
 public class JsonRestIncidentes implements IJsonRestEstructura{
 	private String id;
@@ -21,13 +24,25 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 	private String line;
 	private JSONHandler json;
 	private String pathError;
-
+	HashMap<String, Integer> mapEstado;
+	HashMap<String, Integer> mapTipoIncidente;
 	public JsonRestIncidentes(String pathError){
 		this.pathError=pathError;
+		mapEstado = new HashMap<String,Integer>();
+		mapEstado.put("RESUELTO", 2);
+		mapEstado.put("NO PROCEDENTE", 107);
+		mapEstado.put("ATENDIDO", 109);
+		mapTipoIncidente= new HashMap<String,Integer>();
+		mapTipoIncidente.put("ACCIÓN PROACTIVA", 10);
+		mapTipoIncidente.put("CONSULTA", 6);
+		mapTipoIncidente.put("DISCONFORMIDAD", 13);
+		mapTipoIncidente.put("PEDIDO", 7);
+		mapTipoIncidente.put("PEDIDOS", 7);
+		mapTipoIncidente.put("RECLAMO", 8);
 	}
 	
 	@Override
-	public JSONHandler createJson(TipoTarea tarea){
+	public JSONHandler createJson(TipoTarea tarea) throws ExceptionEstadoInvalido, ExceptionTipoIncidenteInvalido, ExceptionIDNullIncidente{
 		json= new JSONHandler();
 		insertarPrimaryContact(tarea);
 		insertarSubject(tarea);
@@ -40,12 +55,15 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 		return json;
 	}
 	
-	private void insertarPrimaryContact(TipoTarea tarea){
+	private void insertarPrimaryContact(TipoTarea tarea) throws ExceptionIDNullIncidente{
 		if(tarea == TipoTarea.INSERTAR){
 			if(insertarString(insertarString(this.getId()))!=null){
 				JSONHandler jsonContactType = new JSONHandler();
 				jsonContactType.put("id",Integer.parseInt(insertarString(this.getId())));
 				json.put("primaryContact", jsonContactType);
+			}
+			else{
+				throw new ExceptionIDNullIncidente("No se posee un valor ID en la estructura");
 			}
 		}
 	}
@@ -57,14 +75,24 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 	}
 
 	
-	private void insertarQBE(TipoTarea tarea){
+	private void insertarQBE(TipoTarea tarea) throws ExceptionTipoIncidenteInvalido{
 			JSONHandler jsonCustomFields = new JSONHandler();
 			JSONHandler jsonQbe = new JSONHandler();
 			int count=0;
 			if(tarea==TipoTarea.INSERTAR ){
-				if(insertarString(insertarString(this.getNro_sac()))!=null){
+				if(insertarString(this.getNro_sac())!=null){
 					jsonQbe.put("NumeroQbe", insertarString(this.getNro_sac()));
 					count++;
+				}
+				if(insertarString(this.getCausa())!=null){
+					if(mapTipoIncidente.get(this.getCausa().toUpperCase().trim())!=null){
+						JSONHandler tipoIncidente = new JSONHandler();
+						tipoIncidente.put("ID", mapTipoIncidente.get(this.getCausa().toUpperCase().trim()));
+						jsonQbe.put("TipoIncidente", tipoIncidente);
+						count++;
+					}
+					else 
+						throw new ExceptionTipoIncidenteInvalido("El tipo de incidente de la estructura no es valido");
 				}
 			}
 			if(count!=0){
@@ -82,25 +110,18 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 		}
 	}
 
-	private void insertarEstado(TipoTarea tarea){
-		HashMap<String, Integer> map = new HashMap<String,Integer>();
-		map.put("PENDIENTE", 112);
-		map.put("RESUELTO", 2);
-		map.put("INGRESADO", 1);
-		map.put("PENDIENTE DOCUMENTACION", 8);
-		map.put("INCORRECTO / INCOMPLETO", 3);
-		map.put("DERIVADO", 106);
-		map.put("NO PROCEDENTE", 107);
-		map.put("ANULADO", 108);
-		map.put("ATENDIDO", 109);
-		map.put("PENDIENTE PARA LLAMAR", 113);
-		map.put("COORDINADO", 114);
+	private void insertarEstado(TipoTarea tarea) throws ExceptionEstadoInvalido{
+
 		if(tarea==TipoTarea.INSERTAR){
+			if(mapEstado.get(this.getEstado().toUpperCase().trim())!=null){
 			JSONHandler statusWithType = new JSONHandler();
 			JSONHandler status= new JSONHandler();
-				status.put("id", 1);
+				status.put("id", mapEstado.get(this.getEstado().toUpperCase().trim()));
 			statusWithType.put("status", status);
 			json.put("statusWithType", statusWithType);
+			}
+			else 
+				throw new ExceptionEstadoInvalido("El estado de la estructura no corresponde a un estado valido");
 		}	
 	}
 	
@@ -111,7 +132,7 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 				JSONHandler jsonEntryType = new JSONHandler();
 				jsonEntryType.put("lookupName", "Nota");
 			jsonArray.put("entryType", jsonEntryType);
-			String texto= "Modo contacto: "+this.getModo_contacto()+"\n"+"Causa: "+this.getCausa()+"\n"+"Motivo: "+this.getMotivo()+"\nEstado: "+this.getEstado()+"\nSector Responsable: "+this.getSector_responsable()+"\n*********************\n"+this.getHilo_conversacion();
+			String texto= "Numero de Sac: "+this.getNro_sac()+"\nModo contacto: "+this.getModo_contacto() +"\nCausa: "+this.getCausa()+"\n"+"Motivo: "+this.getMotivo()+"\nSector Responsable: "+this.getSector_responsable()+"\n*********************\n"+this.getHilo_conversacion();
 			jsonArray.put("text",texto);
 			JSONHandler jsonChannel = new JSONHandler();
 				jsonChannel.put("id", 6);

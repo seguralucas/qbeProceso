@@ -2,11 +2,14 @@ package exit.services.json;
 
 import java.io.IOException;
 
+import exit.services.excepciones.ExceptionEstadoInvalido;
+import exit.services.excepciones.ExceptionIDNullIncidente;
+import exit.services.excepciones.ExceptionLongitud;
+import exit.services.excepciones.ExceptionTipoIncidenteInvalido;
 import exit.services.fileHandler.CSVHandlerUpdate;
-import exit.services.principal.ExceptionLongitud;
 
 public interface IJsonRestEstructura {
-	public JSONHandler createJson(TipoTarea tarea) throws ExceptionLongitud;
+	public JSONHandler createJson(TipoTarea tarea) throws ExceptionLongitud, ExceptionEstadoInvalido, ExceptionTipoIncidenteInvalido, ExceptionIDNullIncidente;
 	
 	
 	default Boolean insertarTrueOFalse(String valor){

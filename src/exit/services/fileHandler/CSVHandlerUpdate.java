@@ -139,7 +139,7 @@ public class CSVHandlerUpdate {
          csvOutput.close();	      
 	 }
 	 
-	 public void escribirCSVInsercionIncidentes(String path,JSONHandler json, String id) throws IOException{
+	 public void escribirCSVInsercionIncidentes(String path,JSONHandler json, String id, String lookupName) throws IOException{
 		 	CsvWriter csvOutput = new CsvWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio(path), true), ';');
 	        File aux = DirectorioManager.getDirectorioFechaYHoraInicio(path);
 	        if(!aux.exists() || aux.length() == 0)
@@ -147,6 +147,7 @@ public class CSVHandlerUpdate {
 	         JsonRestIncidentes jsonRestIncidentes= json.getJsonRestIncidentes();
 	         JSONHandler qbe = (JSONHandler)((JSONHandler)json.get("customFields")).get("Qbe");
 	         csvOutput.write(id);
+	         csvOutput.write(lookupName);
 	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getId()));        
 	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getNro_sac()));  
 	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getModo_contacto()));
@@ -261,7 +262,7 @@ public class CSVHandlerUpdate {
 			}
 			
 			private void crearCabecerInsercionIncidente(CsvWriter csvOutput) throws IOException{
-				String [] cabeceras= {"ID_RIGHTNOW","ID","NRO_SAC","MODO_CONTACTO","CAUSA","PRODUCTO","MOTIVO","ESTADO","SECTOR_RESPONSABLE","HILO_CONVERSACION"};
+				String [] cabeceras= {"ID_RIGHTNOW","LOOKUPNAME","ID","NRO_SAC","MODO_CONTACTO","CAUSA","PRODUCTO","MOTIVO","ESTADO","SECTOR_RESPONSABLE","HILO_CONVERSACION"};
 				for(int i=0;i<cabeceras.length;i++)
 					csvOutput.write(cabeceras[i]);
 		        csvOutput.endRecord();

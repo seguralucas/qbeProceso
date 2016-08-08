@@ -6,9 +6,13 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
+
+import com.sun.corba.se.impl.ior.ByteBuffer;
 
 import exit.services.json.IJsonRestEstructura;
 import exit.services.json.JSONHandler;
@@ -91,10 +95,13 @@ public class ConvertidosJSONCSV {
 	  		boolean esPrimeraVez=true;
 	  		String[] cabeceras=null;
 	  		while ((line = br.readLine()) != null) {
+	  		    String output = new String(line.getBytes("ISO-8859-1"), "UTF-8");
+	  			System.out.println( output);
 	  			if(esPrimeraVez){
 	  				cabeceras = line./*substring(1).*/split(cvsSplitBy);
 	  				esPrimeraVez=false;
 	  				CSVHandlerUpdate.cabecera=line/*.substring(1)*/;/*Esto es sólo en caso de que estemos haciendo update*/
+	  				CSVHandler2.cabeceras=cabeceras/*.substring(1)*/;/*Esto es sólo en caso de que estemos haciendo update*/
 	  			}
 	  			else{
 	  	    		String[] valoresCsv= line.replace("\"", "'").split(cvsSplitBy);

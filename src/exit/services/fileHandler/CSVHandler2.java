@@ -61,7 +61,7 @@ public class CSVHandler2 {
         csvOutput.endRecord();
 	}
 	
-	 private void escribirCSVERRORLongitud(String path,String line) throws IOException{
+	 public void escribirCSVERRORLongitud(String path,String line) throws IOException{
 		 	CsvWriter csvOutput = new CsvWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio(path), true), ';');
             File aux = DirectorioManager.getDirectorioFechaYHoraInicio(path);
             if(!aux.exists() || aux.length() == 0){

@@ -12,7 +12,7 @@ import exit.services.parser.ParserXMLWSConnector;
 import exit.services.principal.DirectorioManager;
 import exit.services.principal.Separadores;
 
-public class ProcesarResputaInsercionIncidentes implements IProcesarRespuesta{
+public class ProcesarResputaInsercionIncidentes implements IProcesarRespuestaREST{
 
 	 private ParserXMLWSConnector parser;
 	/***************************************************************************************************/
@@ -24,17 +24,24 @@ public class ProcesarResputaInsercionIncidentes implements IProcesarRespuesta{
 	@Override
 	public void procesarPeticionOK(BufferedReader in, JSONHandler json,int responseCode) throws Exception{
        String inputLine;
-       boolean marca = true; //Recuperamos el ID
+       boolean marcaId = true; //Recuperamos el ID
+       boolean marcaLookupName = true; //Recuperamos el ID
        String id=null;
+       String lookupName=null;
        while ((inputLine = in.readLine()) != null) {
     	   System.out.println(inputLine);
-       	if(marca && inputLine.contains("id")){
+       	if(marcaId && inputLine.contains("id")){
        		id=inputLine.replaceAll("\"id\": ", "").replaceAll(",", "");
-       		marca=false;
+       		marcaId=false;
        	}
+       	if(marcaLookupName && inputLine.contains("lookupName")){
+       		lookupName=inputLine.replaceAll("\"lookupName\": ", "").replaceAll(",", "");
+       		marcaLookupName=false;
+       	}
+       	
        }
        CSVHandlerUpdate csvHandler = new CSVHandlerUpdate();
-       csvHandler.escribirCSVInsercionIncidentes(parser.getFicheroCSVOK().replace(".csv", "_insertado_ok.csv"),json,id);
+       csvHandler.escribirCSVInsercionIncidentes(parser.getFicheroCSVOK().replace(".csv", "_insertado_ok.csv"),json,id,lookupName);
 //       out.println(SEPARADOR_ERROR_PETICION);
 //       out.close();
 	 }

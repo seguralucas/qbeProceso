@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import exit.services.excepciones.ExceptionLongitud;
 import exit.services.fileHandler.CSVHandlerUpdate;
 import exit.services.fileHandler.ConvertidosJSONCSV;
 import exit.services.json.JSONHandler;
@@ -16,7 +17,6 @@ import exit.services.json.JsonRestClienteEstructura;
 import exit.services.json.TipoTarea;
 import exit.services.parser.ParserXMLWSConnector;
 import exit.services.principal.DirectorioManager;
-import exit.services.principal.ExceptionLongitud;
 import exit.services.principal.peticiones.UpdatearContacto;
 import exit.services.util.Contador;
 

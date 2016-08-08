@@ -41,6 +41,7 @@ public class WSConector {
 			conn.setRequestProperty("Content-Type", contentType);
 		conn.setRequestProperty("charset", "UTF-8");
 		conn.setDoOutput(true);
+		System.out.println(ParserXMLWSConnector.getInstance().getUser());
 		String userPassword = ParserXMLWSConnector.getInstance().getUser() + ":" + ParserXMLWSConnector.getInstance().getPassword();
 		String encoding = new sun.misc.BASE64Encoder().encode(userPassword.getBytes());
 		conn.setRequestProperty("Authorization", "Basic " + encoding);	 

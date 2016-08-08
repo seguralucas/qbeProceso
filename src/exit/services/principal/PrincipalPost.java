@@ -69,7 +69,8 @@ public class PrincipalPost {
         		FileWriter fw = new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio("duracion.txt"));
     			fw.write("El proceso de updateo demoró un total de: "+tiempoDemorado+" minutos");
         		fw.close();
-    		}    	}
+    		}    	
+    	}
     	
 /***********************************************************/
 		//***Ejecucion secuencial***/

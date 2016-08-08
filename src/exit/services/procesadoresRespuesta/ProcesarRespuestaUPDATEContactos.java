@@ -14,17 +14,17 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import exit.services.excepciones.ExceptionLongitud;
 import exit.services.fileHandler.CSVHandlerUpdate;
 import exit.services.json.JSONHandler;
 import exit.services.json.TipoTarea;
 import exit.services.parser.ParserXMLWSConnector;
 import exit.services.principal.DirectorioManager;
-import exit.services.principal.ExceptionLongitud;
 import exit.services.principal.Separadores;
 import exit.services.principal.WSConector;
 import exit.services.principal.peticiones.InsertarContacto;
 
-public class ProcesarRespuestaUPDATEContactos implements IProcesarRespuesta{
+public class ProcesarRespuestaUPDATEContactos implements IProcesarRespuestaREST{
 	 private ParserXMLWSConnector parser;
 	 
 	 public ProcesarRespuestaUPDATEContactos(){

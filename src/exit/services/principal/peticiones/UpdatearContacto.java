@@ -13,11 +13,11 @@ import exit.services.json.JSONHandler;
 import exit.services.parser.ParserXMLWSConnector;
 import exit.services.principal.Separadores;
 import exit.services.principal.WSConector;
-import exit.services.procesadoresRespuesta.IProcesarRespuesta;
+import exit.services.procesadoresRespuesta.IProcesarRespuestaREST;
 import exit.services.procesadoresRespuesta.ProcesarRespuestaUPDATEContactos;
 
 public class UpdatearContacto {
-	IProcesarRespuesta iProcesarRespuesta;
+	IProcesarRespuestaREST iProcesarRespuesta;
 	
 	 public BufferedReader realizarPeticion(String clientSec, JSONHandler json){
 	        try{

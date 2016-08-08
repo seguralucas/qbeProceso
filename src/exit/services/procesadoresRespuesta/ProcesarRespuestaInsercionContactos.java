@@ -13,7 +13,7 @@ import exit.services.parser.ParserXMLWSConnector;
 import exit.services.principal.DirectorioManager;
 import exit.services.principal.Separadores;
 
-public class ProcesarRespuestaInsercionContactos implements IProcesarRespuesta{
+public class ProcesarRespuestaInsercionContactos implements IProcesarRespuestaREST{
 	 private ParserXMLWSConnector parser;
 	/***************************************************************************************************/
 	/**************LOS SIGUIENTES 2 MÉTODOS DEBERÍAN FUCIONARSE EN ALGO MAS GENERICO********************/
