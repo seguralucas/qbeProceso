@@ -2,6 +2,8 @@ package exit.services.principal;
 
 
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URL;
 import exit.services.parser.ParserXMLWSConnector;
 
@@ -26,7 +28,8 @@ public class WSConector {
 	 }
 	
 	private void initConecction(String method, String contentType) throws Exception{
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.152.140.252", 8080));
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
 		if(method.equalsIgnoreCase("POST")){
 				conn.setRequestMethod("POST");
 		}

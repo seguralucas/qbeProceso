@@ -91,12 +91,11 @@ public class ConvertidosJSONCSV {
 
 		   try(BufferedReader br = new BufferedReader(
 	  		         new InputStreamReader(
-	  		                 new FileInputStream(fileCSV), "UTF-8"))){
+	  		                 new FileInputStream(fileCSV), "ISO-8859-1"))){
 	  		boolean esPrimeraVez=true;
 	  		String[] cabeceras=null;
 	  		while ((line = br.readLine()) != null) {
 	  		    String output = new String(line.getBytes("ISO-8859-1"), "UTF-8");
-	  			System.out.println( output);
 	  			if(esPrimeraVez){
 	  				cabeceras = line./*substring(1).*/split(cvsSplitBy);
 	  				esPrimeraVez=false;

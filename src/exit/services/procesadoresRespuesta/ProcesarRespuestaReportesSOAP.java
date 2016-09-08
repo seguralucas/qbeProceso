@@ -40,7 +40,7 @@ public class ProcesarRespuestaReportesSOAP implements IProcesarRespuestaSOAP{
 		FileWriter fw=new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio("resultadoConculta.xml"), true);
 				fw.write(xml.toString());
 		  try {	
-		        InputStream stream = new ByteArrayInputStream(xml.toString().getBytes(StandardCharsets.UTF_8));
+		        InputStream stream = new ByteArrayInputStream(xml.toString().getBytes());
 		        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		        Document doc= builder.parse(stream);	
 			     doc.getDocumentElement().normalize();

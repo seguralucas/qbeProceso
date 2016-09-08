@@ -33,8 +33,6 @@ public class EjecutorInsercionIncidentes {
 	 	for(File path:pathsCSV){
 		 	ConvertidosJSONCSV jsonHandler = new ConvertidosJSONCSV();
 			jsonHandler.convertirCSVaArrayListJSON(path,Tipo_Json.INCIDENTE);
-			if(true)
-				return ;
         	ExecutorService workers = Executors.newFixedThreadPool(ParserXMLWSConnector.getInstance().getNivelParalelismo());      	
         	//System.out.println(ParserXMLWSConnector.getInstance().getNivelParalelismo());
     	    List<Callable<Void>> tasks = new ArrayList<>();

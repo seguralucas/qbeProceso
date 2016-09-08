@@ -29,7 +29,6 @@ public class ProcesarResputaInsercionIncidentes implements IProcesarRespuestaRES
        String id=null;
        String lookupName=null;
        while ((inputLine = in.readLine()) != null) {
-    	   System.out.println(inputLine);
        	if(marcaId && inputLine.contains("id")){
        		id=inputLine.replaceAll("\"id\": ", "").replaceAll(",", "");
        		marcaId=false;
@@ -42,9 +41,9 @@ public class ProcesarResputaInsercionIncidentes implements IProcesarRespuestaRES
        }
        CSVHandlerUpdate csvHandler = new CSVHandlerUpdate();
        csvHandler.escribirCSVInsercionIncidentes(parser.getFicheroCSVOK().replace(".csv", "_insertado_ok.csv"),json,id,lookupName);
-//       out.println(SEPARADOR_ERROR_PETICION);
-//       out.close();
+
 	 }
+	
 	@Override
 	public void procesarPeticionError(BufferedReader in, JSONHandler json, int responseCode) throws Exception{
 		String path=parser.getFicheroError().replace(".txt", "_error_insercion_"+responseCode+".txt");

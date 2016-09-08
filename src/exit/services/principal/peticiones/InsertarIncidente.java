@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 
 import exit.services.json.JSONHandler;
 import exit.services.parser.ParserXMLWSConnector;
+import exit.services.principal.DirectorioManager;
 import exit.services.principal.Separadores;
 import exit.services.principal.WSConector;
 import exit.services.procesadoresRespuesta.IProcesarRespuestaREST;
@@ -57,16 +58,16 @@ public class InsertarIncidente {
 	 
 	 
 	private void escrobirErrorAplicacion(JSONHandler json,StackTraceElement[] stackArray){
- 	File fichero = new File(ParserXMLWSConnector.getInstance().getFicheroError()); 
     PrintWriter out;
 
 		try {
-			out = new PrintWriter(new BufferedWriter(new FileWriter(fichero, true)));
+			out = new PrintWriter(new BufferedWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio(ParserXMLWSConnector.getInstance().getFicheroError()), true)));
 	        out.println(json.toString());
 			for(StackTraceElement ste: stackArray){
-				out.write("FileName: "+ste.getFileName()+" Metodo: "+ste.getMethodName()+"Clase "+ste.getClassName()+" Linea "+ste.getLineNumber());
+				out.println("FileName: "+ste.getFileName()+" Metodo: "+ste.getMethodName()+"Clase "+ste.getClassName()+" Linea "+ste.getLineNumber());
 			}		
         out.println(Separadores.SEPARADOR_ERROR_TRYCATCH);
+        out.close();
 			} catch (IOException e) {
 			e.printStackTrace();
 		}
