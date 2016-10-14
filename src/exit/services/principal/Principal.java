@@ -5,12 +5,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
+import exit.services.fileHandler.FilesAProcesarManager;
 import exit.services.parser.ParserXMLWSConnector;
 import exit.services.principal.ejecutores.EjecutorInsercionContactos;
 import exit.services.principal.ejecutores.EjecutorInsercionIncidentes;
+import exit.services.principal.ejecutores.EjecutorInsercionIncidentesDistintosFicheros;
 import exit.services.principal.ejecutores.EjecutorUpdateContactosDistintosFicheros;
+import exit.services.principal.peticiones.FetchMapeos;
 
-public class PrincipalPost {
+public class Principal {
 	public static final String UPDATE_CONTACTOS="UPDATE_CONTACTOS";
 	public static final String INSERTAR_CONTACTOS="INSERTAR_CONTACTOS";
 	public static final String INSERTAR_INCIDENTES="INSERTAR_INCIDENTES";
@@ -23,10 +26,11 @@ public class PrincipalPost {
 /***********************************************************/
    		long time_start, time_end;
     	time_start = System.currentTimeMillis();
+
     	if(ParserXMLWSConnector.getInstance().getAcction().equalsIgnoreCase(UPDATE_CONTACTOS)){
 	    	EjecutorUpdateContactosDistintosFicheros ejecutoUpdateContactos = new EjecutorUpdateContactosDistintosFicheros();
 	    	try {
-			//	ejecutoUpdateContactos.updatear();
+				ejecutoUpdateContactos.updatear();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -56,7 +60,7 @@ public class PrincipalPost {
 	    	System.out.println("Creación de threads terminada. Tiempo: "+ ( time_end - time_start ) +" milliseconds");
     	}
     	else if(ParserXMLWSConnector.getInstance().getAcction().equalsIgnoreCase(INSERTAR_INCIDENTES)){
-    		EjecutorInsercionIncidentes hiloApartre = new EjecutorInsercionIncidentes();
+    		EjecutorInsercionIncidentesDistintosFicheros hiloApartre = new EjecutorInsercionIncidentesDistintosFicheros();
 	      	try {
 	      		hiloApartre.insertar();
 			} catch (Exception e) {
@@ -69,57 +73,14 @@ public class PrincipalPost {
         		FileWriter fw = new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio("duracion.txt"));
     			fw.write("El proceso de updateo demoró un total de: "+tiempoDemorado+" minutos");
         		fw.close();
-    		}    	
-    	}
+    		}
+    }
     	
 /***********************************************************/
-		//***Ejecucion secuencial***/
+		//***Borrar ficheros de ejecucion***/
 /***********************************************************/
-		 /*	
-    	long time_start, time_end;
-    	time_start = System.currentTimeMillis();
-	 	ParserXMLWSConnector parser = new ParserXMLWSConnector();
-		WSConector wsCon = null; 
-		try {
-			wsCon= new WSConector(parser);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Error al establecer conexion");
-		}
-		CSVHandler csv = new CSVHandler();
-	 	ArrayList<File> pathsCSV= csv.getAllCSV(parser.getPathCSVRegistros());
-	 	int i=0; 
+		FilesAProcesarManager.getInstance().deleteCSVAProcesar();
 
-		 // Process the data from the input stream.
-
-		for(File path:pathsCSV){
-			System.out.println(path.getName());
-		 	ConvertidosJSONCSV jsonHandler = new ConvertidosJSONCSV();
-			jsonHandler.convertirCSVaArrayListJSON(path);
-			for(JsonRestEstructura json: jsonHandler.getListaJson()){
-				boolean excepcion= false;
-				try{
-				JSONHandler jsonH=json.createJson();
-				}
-				catch(ExceptionLongitud e){
-					excepcion=true;
-				}
-				if(!excepcion)
-//					wsCon.realizarPeticion(jsonH,"0");
-				i++;
-				if(i==100000)
-					return;
-			//	System.out.println(i);
-			}
-
-
-		}
-		System.out.println(i);
-		time_end = System.currentTimeMillis();
-
-        
-		// WSConector wsConector = new WSConector(WSConector.URL_DEFAULT, "POST", "application/json", "lucas.segura", "Lucas.segura");
-		// wsConector.post();*/
 		
 
 	}

@@ -4,10 +4,13 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -37,15 +40,15 @@ public class ProcesarRespuestaReportesSOAP implements IProcesarRespuestaSOAP{
 		String linea;
 		while((linea=in.readLine())!=null)
 			xml.append(linea);		 
-		FileWriter fw=new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio("resultadoConculta.xml"), true);
+		FileWriter fw=new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio("resultadoConsulta.xml"), true);
 				fw.write(xml.toString());
 		  try {	
-		        InputStream stream = new ByteArrayInputStream(xml.toString().getBytes());
+		        InputStream stream = new ByteArrayInputStream(xml.toString().getBytes(StandardCharsets.UTF_8));
 		        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		        Document doc= builder.parse(stream);	
 			     doc.getDocumentElement().normalize();
 			     Element eElement = doc.getDocumentElement();
-			     String[] cabeceras= eElement
+			/*     String[] cabeceras= eElement
 			              .getElementsByTagName("n0:Columns")
 			          .item(0)
 			          .getFirstChild().getNodeValue().split(",");
@@ -55,7 +58,24 @@ public class ProcesarRespuestaReportesSOAP implements IProcesarRespuestaSOAP{
 			     for(int i=0;i<listaDeFilas.getLength();i++){
 			    	 String[] valoresReporte=listaDeFilas.item(i).getFirstChild().getNodeValue().split(",");
 					 escribirCSV("reporte.csv",valoresReporte);
-			     }
+			     }*/
+			    // BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(DirectorioManager.getDirectorioFechaYHoraInicio("reporte.csv")),"windows-1252"));
+			     OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(DirectorioManager.getDirectorioFechaYHoraInicio("reporte.csv"), true));
+			     String cabeceras= eElement.getElementsByTagName("n0:Columns")
+			          .item(0)
+			          .getFirstChild().getNodeValue().replace(',',';');
+			     writer.write(new String(cabeceras.getBytes(),"UTF-8"));
+			     writer.write("\n");
+			     NodeList listaDeFilas= eElement
+			              .getElementsByTagName("n0:Row");
+			     for(int i=0;i<listaDeFilas.getLength();i++){
+			    	 String valoresReporte=listaDeFilas.item(i).getFirstChild().getNodeValue().replace(',', ';');
+			    	 writer.write(new String(valoresReporte.getBytes(),"UTF-8"));
+				     writer.write("\n");
+
+			     	}
+			     writer.close();
+
 			      } catch (Exception e) {
 			         e.printStackTrace();
 			      }
@@ -83,10 +103,9 @@ public class ProcesarRespuestaReportesSOAP implements IProcesarRespuestaSOAP{
 		 for(int i=0;i<valores.length;i++)
 			 csvOutput.write(insertarNoNull(valores[i])); 
 		 csvOutput.endRecord();
-         csvOutput.close();
-         
-      
+         csvOutput.close();      
  }
+	
 	 private String insertarNoNull(String cadena){
 		 if(cadena!=null)
 			 return cadena;

@@ -14,8 +14,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import exit.services.excepciones.ExceptionFormatoFecha;
 import exit.services.excepciones.ExceptionLongitud;
-import exit.services.fileHandler.CSVHandlerUpdate;
+import exit.services.fileHandler.CSVHandler;
 import exit.services.json.JSONHandler;
 import exit.services.json.TipoTarea;
 import exit.services.parser.ParserXMLWSConnector;
@@ -48,12 +49,12 @@ public class ProcesarRespuestaUPDATEContactos implements IProcesarRespuestaREST{
 			}
 			catch(Exception e){
 				System.out.println("ClientSec no encontrado, se procederá a insertar "+clientSec );
-//				insertarContacto(json);
+				insertarContacto(json);
 				return;
 			}
 			Long id= (Long)jsonItems.get("id");
 			System.out.println(id+";"+clientSec);
-			//realizarPeticion(json,String.valueOf(id));
+			realizarPeticion(json,String.valueOf(id));
 		}
 	
 	@Override
@@ -87,14 +88,14 @@ public class ProcesarRespuestaUPDATEContactos implements IProcesarRespuestaREST{
 
 	@Override
 	public void procesarPeticionError(BufferedReader in, JSONHandler json, int responseCode) throws Exception{
-			/*File fichero = DirectorioManager.getDirectorioFechaYHoraInicio(parser.getFicheroError().replace(".txt", "_"+responseCode+".txt")); 
+			File fichero = DirectorioManager.getDirectorioFechaYHoraInicio(parser.getFicheroError().replace(".txt", "_"+responseCode+".txt")); 
 	        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fichero, true)));
             out.println(json.toString());
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
             	out.println(inputLine);
             }
-            CSVHandlerUpdate csvHandler = new CSVHandlerUpdate();
+            CSVHandler csvHandler = new CSVHandler();
             csvHandler.escribirCSV(parser.getFicheroCSVERRORPETICION(),json);            
             out.println(Separadores.SEPARADOR_ERROR_PETICION);
             out.close();
@@ -102,7 +103,7 @@ public class ProcesarRespuestaUPDATEContactos implements IProcesarRespuestaREST{
 	        out = new PrintWriter(new BufferedWriter(new FileWriter(fichero, true)));
             out.println(json.toString());
             out.println(Separadores.SEPARADOR_ERROR_PETICION);
-            out.close();*/
+            out.close();
 		 }
 	
 	private void insertarContacto(JSONHandler jsonHandlerUpdate){
@@ -116,12 +117,15 @@ public class ProcesarRespuestaUPDATEContactos implements IProcesarRespuestaREST{
 		catch(ExceptionLongitud e){
 			excepcion=true;
 		}
+		catch(ExceptionFormatoFecha e){
+			excepcion=true;
+		}
 		if(!excepcion){
 			try{
 			insertarContacto.realizarPeticion(jsonH);
 			}
 			catch(Exception e){
-				CSVHandlerUpdate csv= new CSVHandlerUpdate();
+				CSVHandler csv= new CSVHandler();
 				try {
 					csv.escribirCSV(ParserXMLWSConnector.getInstance().getFicheroCSVERROREJECUCION().replace(".csv", "_clientsec_no_insertado.csv"), jsonH.getLine());
 				} catch (IOException e1) {
@@ -135,7 +139,7 @@ public class ProcesarRespuestaUPDATEContactos implements IProcesarRespuestaREST{
 	
 	
 	public void procesarPeticionTerminada(BufferedReader in, JSONHandler json, int responseCode) throws Exception{
-            CSVHandlerUpdate csvHandler = new CSVHandlerUpdate();
+            CSVHandler csvHandler = new CSVHandler();
             csvHandler.escribirCSV(parser.getFicheroCSVOK(),json);            
 		 }
 	

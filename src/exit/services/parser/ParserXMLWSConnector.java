@@ -26,7 +26,10 @@ public class ParserXMLWSConnector {
 	   private String user;
 	   private String password;
 	   private int nivelParalelismo;
+	   private String ipProxy;
+	   private String puertoProxy;
 	   private String separadorCSV;
+	   private String usaProxy;
 	   private static ParserXMLWSConnector instance=null;
 		
 		private ParserXMLWSConnector(){
@@ -100,7 +103,25 @@ public class ParserXMLWSConnector {
 		          .getElementsByTagName("separadorCSV")
 		                  .item(0)
 		                  .getFirstChild().getNodeValue();
-		      } catch (Exception e) {
+		          
+		          puertoProxy=	  eElement
+		          .getElementsByTagName("puertoProxy")
+		                  .item(0)
+		                  .getFirstChild().getNodeValue();
+		          
+		          ipProxy=	  eElement
+		          .getElementsByTagName("ipProxy")
+		                  .item(0)
+		                  .getFirstChild().getNodeValue();
+		          
+		          usaProxy=	  eElement
+		          .getElementsByTagName("usaProxy")
+		                  .item(0)
+		                  .getFirstChild().getNodeValue();
+		          }
+		  
+
+		  catch (Exception e) {
 		         e.printStackTrace();
 		      }
 		  
@@ -214,4 +235,20 @@ public class ParserXMLWSConnector {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	public String getIpProxy() {
+		return ipProxy;
+	}
+
+	public String getPuertoProxy() {
+		return puertoProxy;
+	}
+
+	public String getUsaProxy() {
+		return usaProxy;
+	}
+
+	
+	
+	
 }

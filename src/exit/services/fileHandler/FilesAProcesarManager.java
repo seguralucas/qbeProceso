@@ -39,9 +39,9 @@ public class FilesAProcesarManager {
 
 		    for (int i = 0; i < listOfFiles.length; i++) {
 		      if (listOfFiles[i].isFile()) {
-
-		        if(listOfFiles[i].getName().equalsIgnoreCase("ejecutar.csv"))
-		        	paths.add(listOfFiles[i]);
+			       if(listOfFiles[i].getName().equalsIgnoreCase("ejecutar.csv")){
+			        	paths.add(listOfFiles[i]);
+			      } 
 		      } 
 		    }
 		    this.csvAProcesar=paths;

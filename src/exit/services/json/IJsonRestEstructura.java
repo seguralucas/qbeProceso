@@ -3,13 +3,16 @@ package exit.services.json;
 import java.io.IOException;
 
 import exit.services.excepciones.ExceptionEstadoInvalido;
+import exit.services.excepciones.ExceptionFormatoFecha;
+import exit.services.excepciones.ExceptionIDNoNumerico;
 import exit.services.excepciones.ExceptionIDNullIncidente;
 import exit.services.excepciones.ExceptionLongitud;
+import exit.services.excepciones.ExceptionModoContactoInvalido;
 import exit.services.excepciones.ExceptionTipoIncidenteInvalido;
-import exit.services.fileHandler.CSVHandlerUpdate;
+import exit.services.fileHandler.CSVHandler;
 
 public interface IJsonRestEstructura {
-	public JSONHandler createJson(TipoTarea tarea) throws ExceptionLongitud, ExceptionEstadoInvalido, ExceptionTipoIncidenteInvalido, ExceptionIDNullIncidente;
+	public JSONHandler createJson(TipoTarea tarea) throws ExceptionLongitud, ExceptionEstadoInvalido, ExceptionTipoIncidenteInvalido, ExceptionIDNullIncidente, ExceptionModoContactoInvalido, ExceptionIDNoNumerico, ExceptionFormatoFecha;
 	
 	
 	default Boolean insertarTrueOFalse(String valor){
@@ -23,22 +26,37 @@ public interface IJsonRestEstructura {
 			return null;
 	}
 	
-	default String insertarFecha(String valor) throws ExceptionLongitud{
+	default String insertarFecha(String valor) throws ExceptionFormatoFecha{
+		final String PATH_ERROR="error_formato_fecha.csv";
 		if(valor==null || valor.length()==0)
 			return null;
+		CSVHandler csv= new CSVHandler();
 		String[] fecha=valor.split("/");
-		try{
-			return fecha[2]+"-"+fecha[1]+"-"+fecha[0];
+		if(fecha.length==3){
+			try{
+				return fecha[2]+"-"+fecha[1]+"-"+fecha[0];
+			}
+			catch(Exception e){
+				try {
+					csv.escribirCSV(PATH_ERROR, this.getLine());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				throw new ExceptionFormatoFecha("Error generico de fecha");
+			}
 		}
-		catch(Exception e){
-			CSVHandlerUpdate csv= new CSVHandlerUpdate();
+		fecha=valor.split("-");
+		if(fecha.length!=3){
 			try {
-				csv.escribirCSV(this.getPathError(), this.getLine());
+				csv.escribirCSV(PATH_ERROR, this.getLine());
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-			throw new ExceptionLongitud();
+			throw new ExceptionFormatoFecha("El formato de la fecha es invalido. Deben ser tres digitos separados por guiones medios o barras");
 		}
+		else
+			return valor;
+
 	}
 	default String insertarString(String valor){
 		

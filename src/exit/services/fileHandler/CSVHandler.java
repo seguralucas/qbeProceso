@@ -1,8 +1,10 @@
 package exit.services.fileHandler;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
@@ -13,11 +15,15 @@ import exit.services.json.JSONHandler;
 import exit.services.json.JsonRestIncidentes;
 import exit.services.parser.ParserXMLWSConnector;
 import exit.services.principal.DirectorioManager;
+import exit.services.principal.Separadores;
 
 public class CSVHandler {
 	
 	public static String cabecera;
-
+	public static final String PATH_ERROR_SERVER_NO_ALCANZADO="servidor_no_alcanzado.csv";
+	public static final String LOG_ERROR_FETCH_TIPO_INCIDENTE="error_fetch_tipo_incidente.txt";
+	public static final String PATH_ERROR_EXCEPTION="exception_ejecucion.csv";
+	public static final String PATH_ERROR_EXCEPTION_LOG="exception_ejecucion_log.txt";
 	
 		private void crearCabecer(CsvWriter csvOutput) throws IOException{
 			String[] campos= cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSV());
@@ -28,9 +34,14 @@ public class CSVHandler {
 		}
 		
 		 public void escribirCSV(File file,String line) throws IOException{
+			 escribirCSV(file,line,true);
+		 }
+		
+		 public void escribirCSV(File file,String line, boolean hasCabecera) throws IOException{
 			 	CsvWriter csvOutput = new CsvWriter(new FileWriter(file, true), ';');
 	            if(!file.exists() || file.length() == 0){
-	            	crearCabecer(csvOutput);
+	            	if(hasCabecera)
+	            		crearCabecer(csvOutput);
 	    	    }
 	            else
 	            	csvOutput.endRecord();		 
@@ -43,13 +54,19 @@ public class CSVHandler {
 		
 		 public void escribirCSV(String path,String line) throws IOException{
 			 	escribirCSV(DirectorioManager.getDirectorioFechaYHoraInicio(path),line);
-			 
+		 }
+		 public void escribirCSV(String path,String line,boolean hasCabecera) throws IOException{
+			 	escribirCSV(DirectorioManager.getDirectorioFechaYHoraInicio(path),line,hasCabecera);
 		 }
 		 public void escribirCSV(String path,JSONHandler json) throws IOException{
+			 escribirCSV(path,json,true);
+		 }
+		 public void escribirCSV(String path,JSONHandler json,boolean hasCabecera) throws IOException{
 				 	CsvWriter csvOutput = new CsvWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio(path), true), ';');
 		            File aux = DirectorioManager.getDirectorioFechaYHoraInicio(path);
 		            if(!aux.exists() || aux.length() == 0){
-		            	crearCabecer(csvOutput);
+		            	if(hasCabecera)
+		            		crearCabecer(csvOutput);
 		            }
 					String[] campos= json.getLine().split(ParserXMLWSConnector.getInstance().getSeparadorCSV());
 					for(int i=0;i<campos.length;i++)
@@ -272,6 +289,26 @@ public class CSVHandler {
 			 catch(Exception e){
 				 return null;
 			 }
+		 }
+		 
+		 public synchronized void escribirErrorException(StackTraceElement[] stackArray) {
+			 escribirErrorException(null,stackArray);
+		 }
+		 public synchronized void escribirErrorException(JSONHandler json,StackTraceElement[] stackArray) {
+			  	File fichero = new File(ParserXMLWSConnector.getInstance().getFicheroError()); 
+			     PrintWriter out;
+					try {
+						if(json!=null){
+							this.escribirCSV(PATH_ERROR_EXCEPTION,json.getLine());
+							this.escribirCSV(PATH_ERROR_EXCEPTION_LOG,json.getLine());
+						}
+						for(StackTraceElement ste: stackArray){
+						     this.escribirCSV(PATH_ERROR_EXCEPTION_LOG,"FileName: "+ste.getFileName()+" Metodo: "+ste.getMethodName()+"Clase "+ste.getClassName()+" Linea "+ste.getLineNumber(),false);
+						}		
+						this.escribirCSV(PATH_ERROR_EXCEPTION_LOG,Separadores.SEPARADOR_ERROR_TRYCATCH);
+						} catch (IOException e) {
+						e.printStackTrace();
+					}
 		 }
 		
 }

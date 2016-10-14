@@ -28,8 +28,13 @@ public class WSConector {
 	 }
 	
 	private void initConecction(String method, String contentType) throws Exception{
-		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.152.140.252", 8080));
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
+		HttpURLConnection conn=null;
+		if(ParserXMLWSConnector.getInstance().getUsaProxy().equalsIgnoreCase("SI")){
+			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ParserXMLWSConnector.getInstance().getIpProxy(), Integer.parseInt(ParserXMLWSConnector.getInstance().getPuertoProxy())));
+			conn = (HttpURLConnection) url.openConnection(proxy);
+		}
+		else
+			conn = (HttpURLConnection) url.openConnection();
 		if(method.equalsIgnoreCase("POST")){
 				conn.setRequestMethod("POST");
 		}

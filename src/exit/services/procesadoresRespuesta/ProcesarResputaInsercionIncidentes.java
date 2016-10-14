@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
-import exit.services.fileHandler.CSVHandlerUpdate;
+import exit.services.fileHandler.CSVHandler;
 import exit.services.json.JSONHandler;
 import exit.services.parser.ParserXMLWSConnector;
 import exit.services.principal.DirectorioManager;
@@ -39,7 +39,7 @@ public class ProcesarResputaInsercionIncidentes implements IProcesarRespuestaRES
        	}
        	
        }
-       CSVHandlerUpdate csvHandler = new CSVHandlerUpdate();
+       CSVHandler csvHandler = new CSVHandler();
        csvHandler.escribirCSVInsercionIncidentes(parser.getFicheroCSVOK().replace(".csv", "_insertado_ok.csv"),json,id,lookupName);
 
 	 }
@@ -54,7 +54,7 @@ public class ProcesarResputaInsercionIncidentes implements IProcesarRespuestaRES
            while ((inputLine = in.readLine()) != null) {
            	out.println(inputLine);
            }
-           CSVHandlerUpdate csvHandler = new CSVHandlerUpdate();
+           CSVHandler csvHandler = new CSVHandler();
            csvHandler.escribirCSV(parser.getFicheroCSVERRORPETICION().replace(".csv", "_insertado_error.csv"),json);            
            out.println(Separadores.SEPARADOR_ERROR_PETICION);
            out.close();

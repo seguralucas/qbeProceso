@@ -7,8 +7,9 @@ import org.json.simple.JSONObject;
 
 import com.csvreader.CsvWriter;
 
+import exit.services.excepciones.ExceptionFormatoFecha;
 import exit.services.excepciones.ExceptionLongitud;
-import exit.services.fileHandler.CSVHandlerUpdate;
+import exit.services.fileHandler.CSVHandler;
 
 public class JsonRestClienteEstructura implements IJsonRestEstructura{
 	/*************************************/
@@ -51,7 +52,7 @@ public class JsonRestClienteEstructura implements IJsonRestEstructura{
 		this.pathError=pathError;
 	}
 	
-	public JSONHandler createJson(TipoTarea tarea) throws ExceptionLongitud{
+	public JSONHandler createJson(TipoTarea tarea) throws ExceptionLongitud, ExceptionFormatoFecha{
 			json= new JSONHandler();
 			insertarContactType(tarea);
 			insertarCRMModules(tarea);
@@ -87,7 +88,7 @@ public class JsonRestClienteEstructura implements IJsonRestEstructura{
 		}
 	}
 	
-	private void insertarQBE(TipoTarea tarea) throws ExceptionLongitud{
+	private void insertarQBE(TipoTarea tarea) throws ExceptionLongitud, ExceptionFormatoFecha{
 		JSONHandler jsonCustomFields = new JSONHandler();
 		JSONHandler jsonQbe = new JSONHandler();
 		int count=0;
@@ -121,15 +122,11 @@ public class JsonRestClienteEstructura implements IJsonRestEstructura{
 			jsonQbe.put("Domicilio", insertarString(this.getNumero()));
 			count++;
 		}
-			try{
 				if( insertarString(this.getFecha_alta())!=null){
 					jsonQbe.put("FechaAlta", insertarFecha(this.getFecha_alta()));
 					count++;
 				}
-			}
-			catch(Exception e){
-				throw new ExceptionLongitud();
-			}
+
 			if(insertarString(this.getSexo())!=null){
 				jsonQbe.put("Genero", insertarString(this.getSexo()));
 				count++;
@@ -526,7 +523,7 @@ public class JsonRestClienteEstructura implements IJsonRestEstructura{
 
 	@Override
 	public String getPathError() {
-		return this.getPathError();
+		return this.pathError;
 	}
 	
 	

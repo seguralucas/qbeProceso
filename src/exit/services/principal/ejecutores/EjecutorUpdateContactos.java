@@ -8,9 +8,11 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import exit.services.excepciones.ExceptionFormatoFecha;
 import exit.services.excepciones.ExceptionLongitud;
-import exit.services.fileHandler.CSVHandlerUpdate;
+import exit.services.fileHandler.CSVHandler;
 import exit.services.fileHandler.ConvertidosJSONCSV;
+import exit.services.fileHandler.FilesAProcesarManager;
 import exit.services.fileHandler.Tipo_Json;
 import exit.services.json.IJsonRestEstructura;
 import exit.services.json.JSONHandler;
@@ -23,8 +25,8 @@ import exit.services.util.Contador;
 public class EjecutorUpdateContactos{
 
 	public void updatear() throws InterruptedException{
-   		CSVHandlerUpdate csv = new CSVHandlerUpdate();
-	 	ArrayList<File> pathsCSV= csv.getCSVAEjecutar(ParserXMLWSConnector.getInstance().getPathCSVRegistros());
+   		CSVHandler csv = new CSVHandler();
+	 	ArrayList<File> pathsCSV= FilesAProcesarManager.getInstance().getCSVAProcesar(ParserXMLWSConnector.getInstance().getPathCSVRegistros());
 	 	for(File path:pathsCSV){
 		 	ConvertidosJSONCSV jsonHandler = new ConvertidosJSONCSV();
 			jsonHandler.convertirCSVaArrayListJSON(path,Tipo_Json.CLIENTE);
@@ -45,12 +47,15 @@ public class EjecutorUpdateContactos{
 					catch(ExceptionLongitud e){
 						excepcion=true;
 					}
+					catch(ExceptionFormatoFecha e){
+						excepcion=true;
+					}
 					if(!excepcion){
 						try{
 						update.realizarPeticion(clientSecAux,jsonH);
 						}
 						catch(Exception e){
-							CSVHandlerUpdate csv= new CSVHandlerUpdate();
+							CSVHandler csv= new CSVHandler();
 							try {
 								csv.escribirCSV(ParserXMLWSConnector.getInstance().getFicheroCSVERROREJECUCION().replace(".csv", "_error_no_espeficado.csv"), jsonH.getLine());
 							} catch (IOException e1) {
@@ -67,7 +72,6 @@ public class EjecutorUpdateContactos{
     	    }
     	    workers.invokeAll(tasks);
     	    workers.shutdown();
-    	    path.delete();
 		}
 	}
 }

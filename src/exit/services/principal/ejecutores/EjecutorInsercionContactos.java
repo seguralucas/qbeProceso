@@ -7,8 +7,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import exit.services.excepciones.ExceptionLongitud;
-import exit.services.fileHandler.CSVHandlerUpdate;
+import exit.services.fileHandler.CSVHandler;
 import exit.services.fileHandler.ConvertidosJSONCSV;
+import exit.services.fileHandler.FilesAProcesarManager;
 import exit.services.fileHandler.Tipo_Json;
 import exit.services.json.IJsonRestEstructura;
 import exit.services.json.JSONHandler;
@@ -29,8 +30,8 @@ public class EjecutorInsercionContactos extends Thread{
 		t.tomarTiempoUno();
 		/**********************************************************/
 	    	 	System.out.println("Nivel de paralelismo: "+ParserXMLWSConnector.getInstance().getNivelParalelismo());
-	    		CSVHandlerUpdate csv = new CSVHandlerUpdate();
-	    	 	ArrayList<File> pathsCSV= csv.getCSVAEjecutar(ParserXMLWSConnector.getInstance().getPathCSVRegistros());
+	    		CSVHandler csv = new CSVHandler();
+	    	 	ArrayList<File> pathsCSV= FilesAProcesarManager.getInstance().getCSVAProcesar(ParserXMLWSConnector.getInstance().getPathCSVRegistros());
 	    		for(File path:pathsCSV){
 	    			System.out.println( path.getName() );
 	    		 	ConvertidosJSONCSV jsonHandler = new ConvertidosJSONCSV();

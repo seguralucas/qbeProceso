@@ -8,8 +8,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 
+import exit.services.fileHandler.CSVHandler;
 import exit.services.json.JSONHandler;
 import exit.services.parser.ParserXMLWSConnector;
 import exit.services.principal.DirectorioManager;
@@ -21,7 +23,7 @@ import exit.services.procesadoresRespuesta.ProcesarResputaInsercionIncidentes;
 
 public class InsertarIncidente {
 	IProcesarRespuestaREST iProcesarRespuesta;
-	
+	public static int x=0;
 	 public BufferedReader realizarPeticion(JSONHandler json){
 	        try{
 	        	WSConector ws = new WSConector("POST",ParserXMLWSConnector.getInstance().getUrl(),"application/json");
@@ -49,29 +51,21 @@ public class InsertarIncidente {
           
 	            return in;	 
 	            }	                
-	            catch (Exception e) {
-					e.printStackTrace();
-					escrobirErrorAplicacion(json,e.getStackTrace());
-					return null;
+            catch (ConnectException e) {
+				CSVHandler csv= new CSVHandler();
+				try {
+					csv.escribirCSV(CSVHandler.PATH_ERROR_SERVER_NO_ALCANZADO, json.getLine());
+				} catch (IOException e1) {
+					e1.printStackTrace();
 				}
-	        }
+				return null;
+			}
+            catch (Exception e) {
+				CSVHandler csv= new CSVHandler();
+				csv.escribirErrorException(json,e.getStackTrace());
+				return null;
+			}
+        }
 	 
 	 
-	private void escrobirErrorAplicacion(JSONHandler json,StackTraceElement[] stackArray){
-    PrintWriter out;
-
-		try {
-			out = new PrintWriter(new BufferedWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio(ParserXMLWSConnector.getInstance().getFicheroError()), true)));
-	        out.println(json.toString());
-			for(StackTraceElement ste: stackArray){
-				out.println("FileName: "+ste.getFileName()+" Metodo: "+ste.getMethodName()+"Clase "+ste.getClassName()+" Linea "+ste.getLineNumber());
-			}		
-        out.println(Separadores.SEPARADOR_ERROR_TRYCATCH);
-        out.close();
-			} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-
-	}
 }

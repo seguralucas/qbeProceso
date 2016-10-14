@@ -10,14 +10,14 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import exit.services.fileHandler.CSVHandlerUpdate;
+import exit.services.fileHandler.CSVHandler;
 import exit.services.parser.ParserXMLWSConnector;
 
 public class DirectorioManager {
 	
 	private static final String NOMBRE_TEMP="temp";
 	public static void SepararFicheros(File archivo) throws IOException{
-    				CSVHandlerUpdate csv= new CSVHandlerUpdate();
+    				CSVHandler csv= new CSVHandler();
 		    		String line="";
 			    		try(BufferedReader br = new BufferedReader(
 			    		         new InputStreamReader(
@@ -27,7 +27,7 @@ public class DirectorioManager {
 			    		while ((line = br.readLine()) != null) {
 			    			if(esPrimeraVez){
 			    				esPrimeraVez=false;
-			    				CSVHandlerUpdate.cabecera=line;			    									    		
+			    				CSVHandler.cabecera=line;			    									    		
 			    			}
 			    			else{
 				    			csv.escribirCSV(DirectorioManager.getDirectorioFechaYHoraInicioDivision(NOMBRE_TEMP+i+".csv"),line);

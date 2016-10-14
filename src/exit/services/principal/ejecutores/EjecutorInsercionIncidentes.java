@@ -9,12 +9,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import exit.services.excepciones.ExceptionEstadoInvalido;
+import exit.services.excepciones.ExceptionIDNoNumerico;
 import exit.services.excepciones.ExceptionIDNullIncidente;
 import exit.services.excepciones.ExceptionLongitud;
+import exit.services.excepciones.ExceptionModoContactoInvalido;
 import exit.services.excepciones.ExceptionTipoIncidenteInvalido;
-import exit.services.fileHandler.CSVHandler2;
-import exit.services.fileHandler.CSVHandlerUpdate;
+import exit.services.fileHandler.CSVHandler;
 import exit.services.fileHandler.ConvertidosJSONCSV;
+import exit.services.fileHandler.FilesAProcesarManager;
 import exit.services.fileHandler.Tipo_Json;
 import exit.services.json.IJsonRestEstructura;
 import exit.services.json.JSONHandler;
@@ -28,8 +30,8 @@ import exit.services.util.Contador;
 
 public class EjecutorInsercionIncidentes {
 	public void insertar() throws InterruptedException{
-   		CSVHandlerUpdate csv = new CSVHandlerUpdate();
-	 	ArrayList<File> pathsCSV= csv.getCSVAEjecutar(ParserXMLWSConnector.getInstance().getPathCSVRegistros());
+   		CSVHandler csv = new CSVHandler();
+	 	ArrayList<File> pathsCSV= FilesAProcesarManager.getInstance().getCSVAProcesar(ParserXMLWSConnector.getInstance().getPathCSVRegistros());
 	 	for(File path:pathsCSV){
 		 	ConvertidosJSONCSV jsonHandler = new ConvertidosJSONCSV();
 			jsonHandler.convertirCSVaArrayListJSON(path,Tipo_Json.INCIDENTE);
@@ -49,19 +51,29 @@ public class EjecutorInsercionIncidentes {
 					}
 					catch(ExceptionEstadoInvalido e){
 						excepcion=true;
-						CSVHandler2 manejadorCSV = new CSVHandler2();
+						CSVHandler manejadorCSV = new CSVHandler();
 						manejadorCSV.escribirCSVERRORLongitud("error_estado_invalido.csv", json.getLine());
 					}
 					catch(ExceptionTipoIncidenteInvalido e){
 						excepcion=true;
-						CSVHandler2 manejadorCSV = new CSVHandler2();
+						CSVHandler manejadorCSV = new CSVHandler();
 						manejadorCSV.escribirCSVERRORLongitud("error_tipo_incidente_invalido.csv", json.getLine());
 					}
 					catch(ExceptionIDNullIncidente e){
 						excepcion=true;
-						CSVHandler2 manejadorCSV = new CSVHandler2();
+						CSVHandler manejadorCSV = new CSVHandler();
 						manejadorCSV.escribirCSVERRORLongitud("error_id_incidente_null.csv", json.getLine());
 					}
+					catch(ExceptionModoContactoInvalido e){
+						excepcion=true;
+						CSVHandler manejadorCSV = new CSVHandler();
+						manejadorCSV.escribirCSVERRORLongitud("error_modo_contacto_invalido.csv", json.getLine());
+					}
+					catch(ExceptionIDNoNumerico e){
+						excepcion=true;
+						CSVHandler manejadorCSV = new CSVHandler();
+						manejadorCSV.escribirCSVERRORLongitud("error_id_no_numerico.csv", json.getLine());
+					}					
 					catch(Exception e){
 						excepcion=true;
 					}
@@ -70,7 +82,7 @@ public class EjecutorInsercionIncidentes {
 							insertar.realizarPeticion(jsonH);
 						}
 						catch(Exception e){
-							CSVHandlerUpdate csv= new CSVHandlerUpdate();
+							CSVHandler csv= new CSVHandler();
 							try {
 								csv.escribirCSV(ParserXMLWSConnector.getInstance().getFicheroCSVERROREJECUCION().replace(".csv", "_error_no_espeficado.csv"), jsonH.getLine());
 							} catch (IOException e1) {
@@ -78,6 +90,10 @@ public class EjecutorInsercionIncidentes {
 							}
 
 						}
+					}
+					else{
+						CSVHandler manejadorCSV = new CSVHandler();
+						manejadorCSV.escribirCSVERRORLongitud("error_generico.csv", json.getLine());
 					}
 					Contador.x++;
 					System.out.println(Contador.x);

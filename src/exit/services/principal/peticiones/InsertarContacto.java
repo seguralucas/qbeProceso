@@ -8,9 +8,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 
-
+import exit.services.fileHandler.CSVHandler;
 import exit.services.json.JSONHandler;
 import exit.services.parser.ParserXMLWSConnector;
 import exit.services.principal.Separadores;
@@ -48,32 +49,26 @@ public class InsertarContacto {
 	            }
            
 	            return in;	 
-	            }	                
-	            catch (Exception e) {
-					e.printStackTrace();
-					escrobirErrorAplicacion(json,e.getStackTrace());
-					return null;
+	            }	       
+            catch (ConnectException e) {
+				CSVHandler csv= new CSVHandler();
+				try {
+					csv.escribirCSV(CSVHandler.PATH_ERROR_SERVER_NO_ALCANZADO, json.getLine());
+				} catch (IOException e1) {
+					e1.printStackTrace();
 				}
+				return null;
+			}
+            catch (Exception e) {
+				CSVHandler csv= new CSVHandler();
+				csv.escribirErrorException(json,e.getStackTrace());
+				return null;
+			}
+        }
 	        }
 	 
 	 
-	private void escrobirErrorAplicacion(JSONHandler json,StackTraceElement[] stackArray){
-  	File fichero = new File(ParserXMLWSConnector.getInstance().getFicheroError()); 
-     PrintWriter out;
 
-		try {
-			out = new PrintWriter(new BufferedWriter(new FileWriter(fichero, true)));
-	        out.println(json.toString());
-			for(StackTraceElement ste: stackArray){
-				out.write("FileName: "+ste.getFileName()+" Metodo: "+ste.getMethodName()+"Clase "+ste.getClassName()+" Linea "+ste.getLineNumber());
-			}		
-         out.println(Separadores.SEPARADOR_ERROR_TRYCATCH);
-			} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-
-	}
 	
 
-}
+

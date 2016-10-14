@@ -10,8 +10,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import exit.services.excepciones.ExceptionLongitud;
-import exit.services.fileHandler.CSVHandlerUpdate;
+import exit.services.fileHandler.CSVHandler;
 import exit.services.fileHandler.ConvertidosJSONCSV;
+import exit.services.fileHandler.FilesAProcesarManager;
 import exit.services.json.JSONHandler;
 import exit.services.json.JsonRestClienteEstructura;
 import exit.services.json.TipoTarea;
@@ -24,16 +25,15 @@ public class EjecutorUpdateContactosDistintosFicheros {
 	
 	
 	public void updatear() throws InterruptedException, IOException{
-		CSVHandlerUpdate csv = new CSVHandlerUpdate();
- 	ArrayList<File> pathsCSVEjecutar= csv.getCSVAEjecutar(ParserXMLWSConnector.getInstance().getPathCSVRegistros());
+	CSVHandler csv = new CSVHandler();
+ 	ArrayList<File> pathsCSVEjecutar= FilesAProcesarManager.getInstance().getCSVAProcesar(ParserXMLWSConnector.getInstance().getPathCSVRegistros());
  	for(File path:pathsCSVEjecutar){
 	 	try {
 			DirectorioManager.SepararFicheros(path);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	 	ArrayList<File> filesCSVDivididos=csv.getAllCSV(DirectorioManager.getPathFechaYHoraInicioDivision());
+	 	ArrayList<File> filesCSVDivididos=FilesAProcesarManager.getInstance().getAllCSV(DirectorioManager.getPathFechaYHoraInicioDivision());
     	ExecutorService workers = Executors.newFixedThreadPool(ParserXMLWSConnector.getInstance().getNivelParalelismo());      	
 	    List<Callable<Void>> tasks = new ArrayList<>();
 	    System.out.println("Nivel de paralelismo: "+ParserXMLWSConnector.getInstance().getNivelParalelismo());
@@ -46,7 +46,7 @@ public class EjecutorUpdateContactosDistintosFicheros {
 	        		JsonRestClienteEstructura jsonEst=null;
 	        		while(!csvThread.isFin()){
 		        		boolean excepcion=false;
-	        			jsonEst = csvThread.convertirCSVaArrayListJSONLineaALinea(file);
+	        			jsonEst = csvThread.convertirCSVaArrayListJSONLineaALineaClientes(file);
 						UpdatearContacto update= new UpdatearContacto();
 	        			if(jsonEst!=null){
 	        				try{
@@ -58,11 +58,10 @@ public class EjecutorUpdateContactosDistintosFicheros {
 	    				if(!excepcion){
 	    					try{
 	    	    	        String clientSecAux= jsonEst.getCliensec();
-	    	    	        //System.out.println(clientSecAux);
 	    					update.realizarPeticion(clientSecAux,jsonH);
 	    					}
 	    					catch(Exception e){
-	    						CSVHandlerUpdate csv= new CSVHandlerUpdate();
+	    						CSVHandler csv= new CSVHandler();
 	    						try {
 	    							csv.escribirCSV(ParserXMLWSConnector.getInstance().getFicheroCSVERROREJECUCION().replace(".csv", "_error_no_espeficado.csv"), jsonH.getLine());
 	    						} catch (IOException e1) {
@@ -72,13 +71,11 @@ public class EjecutorUpdateContactosDistintosFicheros {
 	    					
 	    				}
 	    				Contador.x++;
-	    				//System.out.println(Contador.x);
 	    				if(Contador.x%1000==0){
 	    			  		FileWriter fw = new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio("cantidadProcesada.txt"));
 	    		    		fw.write("el proceso lleva procesado un total de: "+Contador.x+" Registros");
 	    		    		fw.close();
 	    				}
-	        			
 	        			}
 	        		}
 				} 
@@ -93,7 +90,6 @@ public class EjecutorUpdateContactosDistintosFicheros {
 	    }
 	    workers.invokeAll(tasks);
 	    workers.shutdown();
-	//    path.delete();
  		}
 	}
 }

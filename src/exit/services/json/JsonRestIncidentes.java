@@ -4,9 +4,13 @@ import java.util.HashMap;
 
 import org.json.simple.JSONArray;
 
+import com.sun.jersey.api.ParamException;
+
 import exit.services.excepciones.ExceptionEstadoInvalido;
+import exit.services.excepciones.ExceptionIDNoNumerico;
 import exit.services.excepciones.ExceptionIDNullIncidente;
 import exit.services.excepciones.ExceptionLongitud;
+import exit.services.excepciones.ExceptionModoContactoInvalido;
 import exit.services.excepciones.ExceptionTipoIncidenteInvalido;
 
 public class JsonRestIncidentes implements IJsonRestEstructura{
@@ -25,24 +29,20 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 	private JSONHandler json;
 	private String pathError;
 	HashMap<String, Integer> mapEstado;
-	HashMap<String, Integer> mapTipoIncidente;
+	public static HashMap<String, Long> mapTipoIncidente= new HashMap<String,Long>();;
+	public static HashMap<String, Long> mapModoContacto=new HashMap<String,Long>();;
 	public JsonRestIncidentes(String pathError){
 		this.pathError=pathError;
 		mapEstado = new HashMap<String,Integer>();
 		mapEstado.put("RESUELTO", 2);
 		mapEstado.put("NO PROCEDENTE", 107);
 		mapEstado.put("ATENDIDO", 109);
-		mapTipoIncidente= new HashMap<String,Integer>();
-		mapTipoIncidente.put("ACCIÓN PROACTIVA", 10);
-		mapTipoIncidente.put("CONSULTA", 6);
-		mapTipoIncidente.put("DISCONFORMIDAD", 13);
-		mapTipoIncidente.put("PEDIDO", 7);
-		mapTipoIncidente.put("PEDIDOS", 7);
-		mapTipoIncidente.put("RECLAMO", 8);
+
+
 	}
 	
 	@Override
-	public JSONHandler createJson(TipoTarea tarea) throws ExceptionEstadoInvalido, ExceptionTipoIncidenteInvalido, ExceptionIDNullIncidente{
+	public JSONHandler createJson(TipoTarea tarea) throws ExceptionEstadoInvalido, ExceptionTipoIncidenteInvalido, ExceptionIDNullIncidente, ExceptionModoContactoInvalido, ExceptionIDNoNumerico{
 		json= new JSONHandler();
 		insertarPrimaryContact(tarea);
 		insertarSubject(tarea);
@@ -50,14 +50,22 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 		insertarProducto(tarea);
 		insertarEstado(tarea);
 		insertarThread(tarea);
+		insertarMotivo(tarea);
+		insertarSectorResponsable(tarea);
 		json.setLine(this.getLine());
 		json.setJsonRestIncidentes(this);
 		return json;
 	}
 	
-	private void insertarPrimaryContact(TipoTarea tarea) throws ExceptionIDNullIncidente{
+	private void insertarPrimaryContact(TipoTarea tarea) throws ExceptionIDNullIncidente, ExceptionIDNoNumerico{
 		if(tarea == TipoTarea.INSERTAR){
 			if(insertarString(insertarString(this.getId()))!=null){
+				try{
+					Integer.parseInt(insertarString(this.getId()));
+				}
+				catch(NumberFormatException e){
+					throw new ExceptionIDNoNumerico("No se posee un valor ID en la estructura");
+				}
 				JSONHandler jsonContactType = new JSONHandler();
 				jsonContactType.put("id",Integer.parseInt(insertarString(this.getId())));
 				json.put("primaryContact", jsonContactType);
@@ -75,7 +83,7 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 	}
 
 	
-	private void insertarQBE(TipoTarea tarea) throws ExceptionTipoIncidenteInvalido{
+	private void insertarQBE(TipoTarea tarea) throws ExceptionTipoIncidenteInvalido, ExceptionModoContactoInvalido{
 			JSONHandler jsonCustomFields = new JSONHandler();
 			JSONHandler jsonQbe = new JSONHandler();
 			int count=0;
@@ -93,6 +101,17 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 					}
 					else 
 						throw new ExceptionTipoIncidenteInvalido("El tipo de incidente de la estructura no es valido");
+				}
+				if(insertarString(this.getModo_contacto())!=null){
+
+					if(mapModoContacto.get(this.getModo_contacto().toUpperCase().trim())!=null){
+						JSONHandler modoContacto = new JSONHandler();
+						modoContacto.put("ID", mapModoContacto.get(this.getModo_contacto().toUpperCase().trim()));
+						jsonQbe.put("ModoContacto", modoContacto);
+						count++;
+					}
+					else 
+						throw new ExceptionModoContactoInvalido("El tipo de incidente de la estructura no es valido");
 				}
 			}
 			if(count!=0){
@@ -141,6 +160,21 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 			json.put("threads", arrayThread);
 		}
 	}	
+	
+	private void insertarMotivo(TipoTarea tarea ){
+		if(tarea==TipoTarea.INSERTAR){
+			JSONHandler product = new JSONHandler();
+			product.put("lookupName", this.getMotivo());
+			this.json.put("category", product);		
+			}		
+	}
+	private void insertarSectorResponsable(TipoTarea tarea ){
+		if(tarea==TipoTarea.INSERTAR){
+			JSONHandler product = new JSONHandler();
+			product.put("lookupName", this.getSector_responsable());
+			this.json.put("queue", product);		
+			}		
+	}
 	
 	public String getId() {
 		return id;

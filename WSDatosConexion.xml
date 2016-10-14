@@ -14,5 +14,7 @@
 	<password>Lucas.segura</password>
 	<separadorCSV>;</separadorCSV>
 	<nivelParalelismo>10</nivelParalelismo>
-
+	<usaProxy>SI</usaProxy>
+	<ipProxy>10.152.140.252</ipProxy>
+	<puertoProxy>8080</puertoProxy>
 </mi-ws>

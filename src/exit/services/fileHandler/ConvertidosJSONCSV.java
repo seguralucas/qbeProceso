@@ -3,19 +3,11 @@ package exit.services.fileHandler;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-import org.json.simple.JSONArray;
-
-import com.sun.corba.se.impl.ior.ByteBuffer;
-
 import exit.services.json.IJsonRestEstructura;
-import exit.services.json.JSONHandler;
 import exit.services.json.JsonRestClienteEstructura;
 import exit.services.json.JsonRestIncidentes;
 import exit.services.parser.ParserXMLWSConnector;
@@ -25,13 +17,13 @@ public class ConvertidosJSONCSV {
     	private String line = "";
     	private String cvsSplitBy = ParserXMLWSConnector.getInstance().getSeparadorCSV();
     	ArrayList<IJsonRestEstructura> listaJson;
-    	private CSVHandlerUpdate csv;
+    	private CSVHandler csv;
     	private String pathError;
 		private BufferedReader br;
     	private boolean esPrimeraVez;
     	private boolean fin;
 		public ConvertidosJSONCSV(){
-            csv = new CSVHandlerUpdate();
+            csv = new CSVHandler();
             this.pathError=ParserXMLWSConnector.getInstance().getFicheroCSVERROREJECUCION();
             this.esPrimeraVez=true;
             this.fin=false;
@@ -40,7 +32,7 @@ public class ConvertidosJSONCSV {
 		}
 		
 		
-	   public JsonRestClienteEstructura convertirCSVaArrayListJSONLineaALinea(File fileCSV) {
+	   public JsonRestClienteEstructura convertirCSVaArrayListJSONLineaALineaClientes(File fileCSV) {
 		   try{
 			   if(br==null)
 			   br = new BufferedReader(
@@ -51,14 +43,14 @@ public class ConvertidosJSONCSV {
   			if(this.esPrimeraVez){
   				cabeceras = line.split(cvsSplitBy);
   				this.esPrimeraVez=false;
-  				CSVHandlerUpdate.cabecera=line;//Esto es sólo en caso de que estemos haciendo update
+  				CSVHandler.cabecera=line;//Esto es sólo en caso de que estemos haciendo update
   			}
   			else{
   	    		String[] valoresCsv= line.replace("\"", "'").split(cvsSplitBy);
 				try{
   					if(ColumnasMayorCabecera(valoresCsv))
   						throw new Exception();
-  	    		JsonRestClienteEstructura jsonEstructura=creaJsonContactos(valoresCsv,CSVHandlerUpdate.cabecera.split(cvsSplitBy));
+  	    		JsonRestClienteEstructura jsonEstructura=creaJsonContactos(valoresCsv,CSVHandler.cabecera.split(cvsSplitBy));
   	    		
   
   	
@@ -66,6 +58,46 @@ public class ConvertidosJSONCSV {
   					csv.escribirCSV(pathError.replace(".csv", "_registro_error_clientsec.csv"), line);
   					return null;
   	    		}
+    			return jsonEstructura;
+  				}
+  				catch(Exception e){
+  					e.printStackTrace();
+  					csv.escribirCSV(pathError.replace(".csv", "_error_parser.csv"), line);
+  					return null;
+  				}
+  			}
+  		}
+  		System.out.println("Salió");
+  		br.close();
+  		this.fin=true;
+      }
+      catch(IOException e){
+      	e.printStackTrace();
+  		this.fin=true;
+			return null;
+      }	   
+ 			return null;
+	   }
+	   
+	   public JsonRestIncidentes convertirCSVaArrayListJSONLineaALineaIncidentes(File fileCSV) {
+		   try{
+			   if(br==null)
+			   br = new BufferedReader(
+		  		         new InputStreamReader(
+		  		                 new FileInputStream(fileCSV), "UTF-8"));
+  		String[] cabeceras=null;
+  		while ((line = br.readLine()) != null) {
+  			if(this.esPrimeraVez){
+  				cabeceras = line.split(cvsSplitBy);
+  				this.esPrimeraVez=false;
+  				CSVHandler.cabecera=line;//Esto es sólo en caso de que estemos haciendo update
+  			}
+  			else{
+  	    		String[] valoresCsv= line.replace("\"", "'").split(cvsSplitBy);
+				try{
+  					if(ColumnasMayorCabecera(valoresCsv))
+  						throw new Exception();
+  	    		JsonRestIncidentes jsonEstructura=crearJsonIncidente(valoresCsv,CSVHandler.cabecera.split(cvsSplitBy));  	
     			return jsonEstructura;
   				}
   				catch(Exception e){
@@ -99,8 +131,7 @@ public class ConvertidosJSONCSV {
 	  			if(esPrimeraVez){
 	  				cabeceras = line./*substring(1).*/split(cvsSplitBy);
 	  				esPrimeraVez=false;
-	  				CSVHandlerUpdate.cabecera=line/*.substring(1)*/;/*Esto es sólo en caso de que estemos haciendo update*/
-	  				CSVHandler2.cabeceras=cabeceras/*.substring(1)*/;/*Esto es sólo en caso de que estemos haciendo update*/
+	  				CSVHandler.cabecera=line/*.substring(1)*/;/*Esto es sólo en caso de que estemos haciendo update*/
 	  			}
 	  			else{
 	  	    		String[] valoresCsv= line.replace("\"", "'").split(cvsSplitBy);
@@ -108,14 +139,14 @@ public class ConvertidosJSONCSV {
 	  					if(ColumnasMayorCabecera(valoresCsv))
 	  						throw new Exception();
 		  	    		if(tipo_json==Tipo_Json.CLIENTE){
-		  	    			JsonRestClienteEstructura jsonEstructura=creaJsonContactos(valoresCsv,CSVHandlerUpdate.cabecera.split(cvsSplitBy));
+		  	    			JsonRestClienteEstructura jsonEstructura=creaJsonContactos(valoresCsv,CSVHandler.cabecera.split(cvsSplitBy));
 			  	    		if(jsonEstructura.getCliensec()==null || !jsonEstructura.getCliensec().matches("[0-9]+"))
 			  					csv.escribirCSV(pathError.replace(".csv", "_registro_error_clientsec.csv"), line);
 			  	    		else
 			  	    			this.listaJson.add(jsonEstructura);
 		  				}
 		  	    		else if(tipo_json==Tipo_Json.INCIDENTE){
-		  	    			JsonRestIncidentes jsonEstructura=crearJsonIncidente(valoresCsv,CSVHandlerUpdate.cabecera.split(cvsSplitBy));
+		  	    			JsonRestIncidentes jsonEstructura=crearJsonIncidente(valoresCsv,CSVHandler.cabecera.split(cvsSplitBy));
 		  	    			this.listaJson.add(jsonEstructura);
 		  	    		}
 	  				}
@@ -174,6 +205,7 @@ public class ConvertidosJSONCSV {
 		   JsonRestIncidentes jsonEstructura= new JsonRestIncidentes(pathError);
 	   		jsonEstructura.setLine(line);
 	   		int i;
+	   		StringBuilder sb= new StringBuilder();
 	   		for(i=0;i<valoresCsv.length;i++){
 	   			switch (cabeceras[i]) {   										
 					case "ID": jsonEstructura.setId(valoresCsv[i]); break;				
@@ -184,9 +216,12 @@ public class ConvertidosJSONCSV {
 	   				case "MOTIVO": jsonEstructura.setMotivo(valoresCsv[i]); break;				
 	   				case "ESTADO": jsonEstructura.setEstado(valoresCsv[i]); break;				
 	   				case "SECTOR_RESPONSABLE": jsonEstructura.setSector_responsable(valoresCsv[i]); break;				
-	   				case "HILO_CONVERSACION": jsonEstructura.setHilo_conversacion(valoresCsv[i]); break;				
+	   				case "HILO1": sb.append(valoresCsv[i]); break;				
+	   				case "HILO2": sb.append(valoresCsv[i]); break;				
 					}
 			}
+				jsonEstructura.setHilo_conversacion(sb.toString());
+
 	   		return jsonEstructura;
   }
 	   
@@ -197,7 +232,7 @@ public class ConvertidosJSONCSV {
 	   }
 	   
 	   private boolean ColumnasMayorCabecera(String[] valoresCsv){
-		   return CSVHandlerUpdate.cabecera.split(cvsSplitBy).length<valoresCsv.length;
+		   return CSVHandler.cabecera.split(cvsSplitBy).length<valoresCsv.length;
 	   }
 	   
 	   
