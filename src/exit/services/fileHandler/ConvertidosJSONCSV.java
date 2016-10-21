@@ -67,7 +67,6 @@ public class ConvertidosJSONCSV {
   				}
   			}
   		}
-  		System.out.println("Salió");
   		br.close();
   		this.fin=true;
       }
@@ -84,10 +83,13 @@ public class ConvertidosJSONCSV {
 			   if(br==null)
 			   br = new BufferedReader(
 		  		         new InputStreamReader(
-		  		                 new FileInputStream(fileCSV), "UTF-8"));
+		  		                 new FileInputStream(fileCSV)));
   		String[] cabeceras=null;
   		while ((line = br.readLine()) != null) {
   			if(this.esPrimeraVez){
+  				String firstChar=String.valueOf(line.charAt(0));
+  				if(!firstChar.matches("[a-zA-Z]"))
+  					line=line.substring(1);//Ocasionalmente el primer caracter erra un signo raro y hay que eliminarlo.
   				cabeceras = line.split(cvsSplitBy);
   				this.esPrimeraVez=false;
   				CSVHandler.cabecera=line;//Esto es sólo en caso de que estemos haciendo update
@@ -107,7 +109,6 @@ public class ConvertidosJSONCSV {
   				}
   			}
   		}
-  		System.out.println("Salió");
   		br.close();
   		this.fin=true;
       }

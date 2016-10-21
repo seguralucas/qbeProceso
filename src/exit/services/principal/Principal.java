@@ -26,7 +26,15 @@ public class Principal {
 /***********************************************************/
    		long time_start, time_end;
     	time_start = System.currentTimeMillis();
-
+    	System.out.println("Usuario: "+ParserXMLWSConnector.getInstance().getUser());
+    	System.out.println("Password: "+ParserXMLWSConnector.getInstance().getPassword());
+    	System.out.println("Acción: "+ParserXMLWSConnector.getInstance().getAcction());
+    	System.out.println("Nivel de paralelismo: "+ParserXMLWSConnector.getInstance().getNivelParalelismo());
+    	System.out.println("Usa Proxy: "+ParserXMLWSConnector.getInstance().getUsaProxy());
+    	if(ParserXMLWSConnector.getInstance().getUsaProxy().equalsIgnoreCase("si")){
+        	System.out.println("IP Proxy: "+ParserXMLWSConnector.getInstance().getIpProxy());
+    		System.out.println("Puerto Proxy: "+ParserXMLWSConnector.getInstance().getPuertoProxy());
+    	}
     	if(ParserXMLWSConnector.getInstance().getAcction().equalsIgnoreCase(UPDATE_CONTACTOS)){
 	    	EjecutorUpdateContactosDistintosFicheros ejecutoUpdateContactos = new EjecutorUpdateContactosDistintosFicheros();
 	    	try {

@@ -16,7 +16,7 @@
 	<user>usuario.importador</user>
 
 	<password>Lucas123</password>
-	<separadorCSV>;</separadorCSV>
+	<separadorCSV>%</separadorCSV>
 	<nivelParalelismo>10</nivelParalelismo>
 	<usaProxy>NO</usaProxy>
 <!--	<usaProxy>SI</usaProxy>-->

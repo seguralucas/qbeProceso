@@ -27,8 +27,9 @@ public class CSVHandler {
 	
 		private void crearCabecer(CsvWriter csvOutput) throws IOException{
 			String[] campos= cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSV());
-			for(int i=0;i<campos.length;i++)
+			for(int i=0;i<campos.length;i++){
 				csvOutput.write(campos[i]);
+			}
         	csvOutput.endRecord();
 
 		}
@@ -38,7 +39,7 @@ public class CSVHandler {
 		 }
 		
 		 public void escribirCSV(File file,String line, boolean hasCabecera) throws IOException{
-			 	CsvWriter csvOutput = new CsvWriter(new FileWriter(file, true), ';');
+			 	CsvWriter csvOutput = new CsvWriter(new FileWriter(file, true), ParserXMLWSConnector.getInstance().getSeparadorCSV().charAt(0));
 	            if(!file.exists() || file.length() == 0){
 	            	if(hasCabecera)
 	            		crearCabecer(csvOutput);
@@ -62,7 +63,7 @@ public class CSVHandler {
 			 escribirCSV(path,json,true);
 		 }
 		 public void escribirCSV(String path,JSONHandler json,boolean hasCabecera) throws IOException{
-				 	CsvWriter csvOutput = new CsvWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio(path), true), ';');
+				 	CsvWriter csvOutput = new CsvWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio(path), true), ParserXMLWSConnector.getInstance().getSeparadorCSV().charAt(0));
 		            File aux = DirectorioManager.getDirectorioFechaYHoraInicio(path);
 		            if(!aux.exists() || aux.length() == 0){
 		            	if(hasCabecera)
@@ -77,7 +78,7 @@ public class CSVHandler {
 		 }
 		 
 	 public void escribirCSVInsercionContacto(String path,JSONHandler json, String id) throws IOException{
-	 	CsvWriter csvOutput = new CsvWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio(path), true), ';');
+	 	CsvWriter csvOutput = new CsvWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio(path), true), ParserXMLWSConnector.getInstance().getSeparadorCSV().charAt(0));
         File aux = DirectorioManager.getDirectorioFechaYHoraInicio(path);
         if(!aux.exists() || aux.length() == 0){
         	crearCabecerInsercionContacto(csvOutput);
@@ -126,7 +127,7 @@ public class CSVHandler {
 	 }
 	 
 	 public void escribirCSVInsercionIncidentes(String path,JSONHandler json, String id, String lookupName) throws IOException{
-		 	CsvWriter csvOutput = new CsvWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio(path), true), ';');
+		 	CsvWriter csvOutput = new CsvWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio(path), true), ParserXMLWSConnector.getInstance().getSeparadorCSV().charAt(0));
 	        File aux = DirectorioManager.getDirectorioFechaYHoraInicio(path);
 	        if(!aux.exists() || aux.length() == 0)
 	        	crearCabecerInsercionIncidente(csvOutput);
@@ -255,7 +256,7 @@ public class CSVHandler {
 			}
 			
 			 public void escribirCSVERRORLongitud(String path,String line) throws IOException{
-				 	CsvWriter csvOutput = new CsvWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio(path), true), ';');
+				 	CsvWriter csvOutput = new CsvWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio(path), true), ParserXMLWSConnector.getInstance().getSeparadorCSV().charAt(0));
 		            File aux = DirectorioManager.getDirectorioFechaYHoraInicio(path);
 		            if(!aux.exists() || aux.length() == 0){
 		            	String[] cabeceraArray = cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSV());

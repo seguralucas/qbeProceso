@@ -49,8 +49,9 @@ public class FilesAProcesarManager {
 		}
 	
 	public void deleteCSVAProcesar(){
-		for(File f: this.csvAProcesar)
+		for(File f: this.csvAProcesar){
 			f.delete();
+		}
 		}	
 
 }
