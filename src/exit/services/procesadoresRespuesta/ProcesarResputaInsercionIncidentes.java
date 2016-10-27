@@ -46,7 +46,7 @@ public class ProcesarResputaInsercionIncidentes implements IProcesarRespuestaRES
 	
 	@Override
 	public void procesarPeticionError(BufferedReader in, JSONHandler json, int responseCode) throws Exception{
-		String path=parser.getFicheroError().replace(".txt", "_error_insercion_"+responseCode+".txt");
+		String path=("error_insercion_servidor_codigo_"+responseCode+".txt");
 	     	File fichero = DirectorioManager.getDirectorioFechaYHoraInicio(path);
 	        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fichero, true)));
            out.println(json.toString());
@@ -55,7 +55,7 @@ public class ProcesarResputaInsercionIncidentes implements IProcesarRespuestaRES
            	out.println(inputLine);
            }
            CSVHandler csvHandler = new CSVHandler();
-           csvHandler.escribirCSV(parser.getFicheroCSVERRORPETICION().replace(".csv", "_insertado_error.csv"),json);            
+           csvHandler.escribirCSV("error_insercion_servidor_codigo_"+responseCode+".csv",json);            
            out.println(Separadores.SEPARADOR_ERROR_PETICION);
            out.close();
            path="json"+parser.getFicheroError();

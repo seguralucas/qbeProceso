@@ -15,7 +15,7 @@ import exit.services.parser.ParserXMLWSConnector;
 
 public class ConvertidosJSONCSV {
     	private String line = "";
-    	private String cvsSplitBy = ParserXMLWSConnector.getInstance().getSeparadorCSV();
+    	//private String cvsSplitBy = ParserXMLWSConnector.getInstance().getSeparadorCSV();
     	ArrayList<IJsonRestEstructura> listaJson;
     	private CSVHandler csv;
     	private String pathError;
@@ -41,16 +41,16 @@ public class ConvertidosJSONCSV {
   		String[] cabeceras=null;
   		while ((line = br.readLine()) != null) {
   			if(this.esPrimeraVez){
-  				cabeceras = line.split(cvsSplitBy);
+  				cabeceras = line.split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX());
   				this.esPrimeraVez=false;
   				CSVHandler.cabecera=line;//Esto es sólo en caso de que estemos haciendo update
   			}
   			else{
-  	    		String[] valoresCsv= line.replace("\"", "'").split(cvsSplitBy);
+  	    		String[] valoresCsv= line.replace("\"", "'").split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX());
 				try{
   					if(ColumnasMayorCabecera(valoresCsv))
   						throw new Exception();
-  	    		JsonRestClienteEstructura jsonEstructura=creaJsonContactos(valoresCsv,CSVHandler.cabecera.split(cvsSplitBy));
+  	    		JsonRestClienteEstructura jsonEstructura=creaJsonContactos(valoresCsv,CSVHandler.cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX()));
   	    		
   
   	
@@ -90,16 +90,16 @@ public class ConvertidosJSONCSV {
   				String firstChar=String.valueOf(line.charAt(0));
   				if(!firstChar.matches("[a-zA-Z]"))
   					line=line.substring(1);//Ocasionalmente el primer caracter erra un signo raro y hay que eliminarlo.
-  				cabeceras = line.split(cvsSplitBy);
+  				cabeceras = line.split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX());
   				this.esPrimeraVez=false;
   				CSVHandler.cabecera=line;//Esto es sólo en caso de que estemos haciendo update
   			}
   			else{
-  	    		String[] valoresCsv= line.replace("\"", "'").split(cvsSplitBy);
+  	    		String[] valoresCsv= line.replace("\"", "'").split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX());
 				try{
   					if(ColumnasMayorCabecera(valoresCsv))
   						throw new Exception();
-  	    		JsonRestIncidentes jsonEstructura=crearJsonIncidente(valoresCsv,CSVHandler.cabecera.split(cvsSplitBy));  	
+  	    		JsonRestIncidentes jsonEstructura=crearJsonIncidente(valoresCsv,CSVHandler.cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX()));  	
     			return jsonEstructura;
   				}
   				catch(Exception e){
@@ -130,24 +130,24 @@ public class ConvertidosJSONCSV {
 	  		while ((line = br.readLine()) != null) {
 	  		    String output = new String(line.getBytes("ISO-8859-1"), "UTF-8");
 	  			if(esPrimeraVez){
-	  				cabeceras = line./*substring(1).*/split(cvsSplitBy);
+	  				cabeceras = line./*substring(1).*/split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX());
 	  				esPrimeraVez=false;
 	  				CSVHandler.cabecera=line/*.substring(1)*/;/*Esto es sólo en caso de que estemos haciendo update*/
 	  			}
 	  			else{
-	  	    		String[] valoresCsv= line.replace("\"", "'").split(cvsSplitBy);
+	  	    		String[] valoresCsv= line.replace("\"", "'").split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX());
 	  				try{
 	  					if(ColumnasMayorCabecera(valoresCsv))
 	  						throw new Exception();
 		  	    		if(tipo_json==Tipo_Json.CLIENTE){
-		  	    			JsonRestClienteEstructura jsonEstructura=creaJsonContactos(valoresCsv,CSVHandler.cabecera.split(cvsSplitBy));
+		  	    			JsonRestClienteEstructura jsonEstructura=creaJsonContactos(valoresCsv,CSVHandler.cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX()));
 			  	    		if(jsonEstructura.getCliensec()==null || !jsonEstructura.getCliensec().matches("[0-9]+"))
 			  					csv.escribirCSV(pathError.replace(".csv", "_registro_error_clientsec.csv"), line);
 			  	    		else
 			  	    			this.listaJson.add(jsonEstructura);
 		  				}
 		  	    		else if(tipo_json==Tipo_Json.INCIDENTE){
-		  	    			JsonRestIncidentes jsonEstructura=crearJsonIncidente(valoresCsv,CSVHandler.cabecera.split(cvsSplitBy));
+		  	    			JsonRestIncidentes jsonEstructura=crearJsonIncidente(valoresCsv,CSVHandler.cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX()));
 		  	    			this.listaJson.add(jsonEstructura);
 		  	    		}
 	  				}
@@ -233,7 +233,7 @@ public class ConvertidosJSONCSV {
 	   }
 	   
 	   private boolean ColumnasMayorCabecera(String[] valoresCsv){
-		   return CSVHandler.cabecera.split(cvsSplitBy).length<valoresCsv.length;
+		   return CSVHandler.cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX()).length<valoresCsv.length;
 	   }
 	   
 	   

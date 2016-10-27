@@ -133,6 +133,11 @@ public class ParserXMLWSConnector {
 	public String getSeparadorCSV() {
 		return separadorCSV;
 	}
+	
+	public String getSeparadorCSVREGEX() {
+		return "\\"+separadorCSV;
+	}
+	
 
 	public void setSeparadorCSV(String separadorCSV) {
 		this.separadorCSV = separadorCSV;

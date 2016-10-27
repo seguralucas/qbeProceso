@@ -31,7 +31,7 @@ public class CompararSiMismo {
 				esPrimeraVez=false;
 			}
 			else{
-	    			String[] valoresCsv= line.replace("\"", "'").split(ParserXMLWSConnector.getInstance().getSeparadorCSV());
+	    			String[] valoresCsv= line.replace("\"", "'").split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX());
 	    			if(!a.contains(Integer.parseInt(valoresCsv[2])))
 	    				a.add(Integer.parseInt(valoresCsv[2]));
 	    			else

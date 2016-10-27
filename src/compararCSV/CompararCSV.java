@@ -93,7 +93,7 @@ public static HashMap<Integer, String> getSecuencuas(File fileCSV, int columna){
 			else{
 				i++;
 
-	    		String[] valoresCsv= line.replace("\"", "'").split(ParserXMLWSConnector.getInstance().getSeparadorCSV());
+	    		String[] valoresCsv= line.replace("\"", "'").split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX());
    					hm.put(Integer.parseInt(valoresCsv[columna]), line);   				
    				}
 			}

@@ -133,12 +133,7 @@ public class EjecutorInsercionIncidentesDistintosFicheros {
 								else if(excepcionGenerica){
 									CSVHandler manejadorCSV = new CSVHandler();
 									manejadorCSV.escribirCSVERRORLongitud("error_generico.csv", jsonEst.getLine());
-								}
-								if(excepcion){
-									y++;
-									System.out.println("y"+y);
-								}
-								
+								}								
 			    				Contador.x++;
 			    				if(Contador.x%1000==0){
 			    			  		FileWriter fw = new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio("cantidadProcesada.txt"));

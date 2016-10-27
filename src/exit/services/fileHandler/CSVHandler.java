@@ -26,7 +26,7 @@ public class CSVHandler {
 	public static final String PATH_ERROR_EXCEPTION_LOG="exception_ejecucion_log.txt";
 	
 		private void crearCabecer(CsvWriter csvOutput) throws IOException{
-			String[] campos= cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSV());
+			String[] campos= cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX());
 			for(int i=0;i<campos.length;i++){
 				csvOutput.write(campos[i]);
 			}
@@ -46,7 +46,7 @@ public class CSVHandler {
 	    	    }
 	            else
 	            	csvOutput.endRecord();		 
-	            String[] campos= line.split(ParserXMLWSConnector.getInstance().getSeparadorCSV());
+	            String[] campos= line.split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX());
 	            for(String c:campos){
 	                csvOutput.write(c);        
 	            }
@@ -69,7 +69,7 @@ public class CSVHandler {
 		            	if(hasCabecera)
 		            		crearCabecer(csvOutput);
 		            }
-					String[] campos= json.getLine().split(ParserXMLWSConnector.getInstance().getSeparadorCSV());
+					String[] campos= json.getLine().split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX());
 					for(int i=0;i<campos.length;i++)
 						csvOutput.write(campos[i]);
 	            	csvOutput.endRecord();
@@ -132,9 +132,8 @@ public class CSVHandler {
 	        if(!aux.exists() || aux.length() == 0)
 	        	crearCabecerInsercionIncidente(csvOutput);
 	         JsonRestIncidentes jsonRestIncidentes= json.getJsonRestIncidentes();
-	         JSONHandler qbe = (JSONHandler)((JSONHandler)json.get("customFields")).get("Qbe");
 	         csvOutput.write(id);
-	         csvOutput.write(lookupName);
+	         csvOutput.write(lookupName.replaceAll("\\\"", ""));
 	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getId()));        
 	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getNro_sac()));  
 	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getModo_contacto()));
@@ -259,14 +258,14 @@ public class CSVHandler {
 				 	CsvWriter csvOutput = new CsvWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio(path), true), ParserXMLWSConnector.getInstance().getSeparadorCSV().charAt(0));
 		            File aux = DirectorioManager.getDirectorioFechaYHoraInicio(path);
 		            if(!aux.exists() || aux.length() == 0){
-		            	String[] cabeceraArray = cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSV());
+		            	String[] cabeceraArray = cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX());
 		            	for(int i=0;i<cabeceraArray.length;i++)
 		            		csvOutput.write(cabeceraArray[i]);
 		            	csvOutput.endRecord();		 
 		            }
 		            else
 		            	csvOutput.endRecord();		 
-		            String[] campos= line.split(ParserXMLWSConnector.getInstance().getSeparadorCSV());
+		            String[] campos= line.split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX());
 		            for(String c:campos){
 		                csvOutput.write(c);        
 		            }
