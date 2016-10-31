@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import exit.services.json.IJsonRestEstructura;
 import exit.services.json.JsonRestClienteEstructura;
+import exit.services.json.JsonRestIncidenteDelete;
 import exit.services.json.JsonRestIncidentes;
 import exit.services.parser.ParserXMLWSConnector;
 
@@ -132,6 +133,10 @@ public class ConvertidosJSONCSV {
 	  			if(esPrimeraVez){
 	  				cabeceras = line./*substring(1).*/split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX());
 	  				esPrimeraVez=false;
+	  				String firstChar=String.valueOf(line.charAt(0));
+	  				if(!firstChar.matches("[a-zA-Z]"))
+	  					line=line.substring(1);//Ocasionalmente el primer caracter erra un signo raro y hay que eliminarlo.
+	
 	  				CSVHandler.cabecera=line/*.substring(1)*/;/*Esto es sólo en caso de que estemos haciendo update*/
 	  			}
 	  			else{
@@ -148,6 +153,10 @@ public class ConvertidosJSONCSV {
 		  				}
 		  	    		else if(tipo_json==Tipo_Json.INCIDENTE){
 		  	    			JsonRestIncidentes jsonEstructura=crearJsonIncidente(valoresCsv,CSVHandler.cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX()));
+		  	    			this.listaJson.add(jsonEstructura);
+		  	    		}
+		  	    		if(tipo_json==Tipo_Json.DELETEINCIDENTE){
+		  	    			JsonRestIncidenteDelete jsonEstructura=crearJsonIncidenteDelete(valoresCsv,CSVHandler.cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX()));
 		  	    			this.listaJson.add(jsonEstructura);
 		  	    		}
 	  				}
@@ -223,6 +232,18 @@ public class ConvertidosJSONCSV {
 			}
 				jsonEstructura.setHilo_conversacion(sb.toString());
 
+	   		return jsonEstructura;
+  }
+	   
+	   private JsonRestIncidenteDelete crearJsonIncidenteDelete(String[] valoresCsv, String[] cabeceras){
+		   JsonRestIncidenteDelete jsonEstructura= new JsonRestIncidenteDelete(pathError);
+	   		jsonEstructura.setLine(line);
+	   		int i;
+	   		for(i=0;i<valoresCsv.length;i++){
+	   			switch (cabeceras[i]) {   										
+					case "ID_RIGHTNOW": jsonEstructura.setId_rightnow(valoresCsv[i]); break;				
+					}
+			}
 	   		return jsonEstructura;
   }
 	   

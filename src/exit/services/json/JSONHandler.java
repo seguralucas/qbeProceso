@@ -8,6 +8,7 @@ public class JSONHandler extends JSONObject{
 	
 	private JsonRestClienteEstructura jsonRestEstructura;
 	private JsonRestIncidentes jsonRestIncidentes;
+	private JsonRestIncidenteDelete jsonRestIncidentesDelete;
 	
 	
 	public String getLine() {
@@ -19,6 +20,14 @@ public class JSONHandler extends JSONObject{
 	}
 	
 	
+
+	public JsonRestIncidenteDelete getJsonRestIncidentesDelete() {
+		return jsonRestIncidentesDelete;
+	}
+
+	public void setJsonRestIncidentesDelete(JsonRestIncidenteDelete jsonRestIncidentesDelete) {
+		this.jsonRestIncidentesDelete = jsonRestIncidentesDelete;
+	}
 
 	public JsonRestIncidentes getJsonRestIncidentes() {
 		return jsonRestIncidentes;

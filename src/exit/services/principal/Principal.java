@@ -7,6 +7,7 @@ import java.lang.management.ManagementFactory;
 
 import exit.services.fileHandler.FilesAProcesarManager;
 import exit.services.parser.ParserXMLWSConnector;
+import exit.services.principal.ejecutores.EjecutorBorradoIncidentes;
 import exit.services.principal.ejecutores.EjecutorInsercionContactos;
 import exit.services.principal.ejecutores.EjecutorInsercionIncidentes;
 import exit.services.principal.ejecutores.EjecutorInsercionIncidentesDistintosFicheros;
@@ -17,6 +18,7 @@ public class Principal {
 	public static final String UPDATE_CONTACTOS="UPDATE_CONTACTOS";
 	public static final String INSERTAR_CONTACTOS="INSERTAR_CONTACTOS";
 	public static final String INSERTAR_INCIDENTES="INSERTAR_INCIDENTES";
+	public static final String BORRAR_INCIDENTES="BORRAR_INCIDENTES";
 	
 	public static void main(String[] args) throws IOException {
 		
@@ -82,7 +84,23 @@ public class Principal {
     			fw.write("El proceso de updateo demoró un total de: "+tiempoDemorado+" minutos");
         		fw.close();
     		}
-    }
+      }
+    	else if(ParserXMLWSConnector.getInstance().getAcction().equalsIgnoreCase(BORRAR_INCIDENTES)){
+    		EjecutorBorradoIncidentes hiloApartre = new EjecutorBorradoIncidentes();
+	      	try {
+	      		hiloApartre.borrar();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	    	time_end = System.currentTimeMillis();
+	    	System.out.println(ManagementFactory.getThreadMXBean().getThreadCount() );
+	    	double tiempoDemorado=(time_end - time_start)/1000/60 ;
+    		if(tiempoDemorado>1){
+        		FileWriter fw = new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio("duracion.txt"));
+    			fw.write("El proceso de updateo demoró un total de: "+tiempoDemorado+" minutos");
+        		fw.close();
+    		}
+      }
     	
 /***********************************************************/
 		//***Borrar ficheros de ejecucion***/

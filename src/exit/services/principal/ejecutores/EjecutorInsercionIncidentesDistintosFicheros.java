@@ -82,7 +82,7 @@ public class EjecutorInsercionIncidentesDistintosFicheros {
 								try{
 									
 										jsonH=jsonEst.createJson(TipoTarea.INSERTAR);
-									//	System.out.println(jsonH);
+										System.out.println(jsonH);
 								}
 								catch(ExceptionEstadoInvalido e){
 									excepcion=true;
@@ -139,6 +139,7 @@ public class EjecutorInsercionIncidentesDistintosFicheros {
 			    			  		FileWriter fw = new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio("cantidadProcesada.txt"));
 			    		    		fw.write("el proceso lleva procesado un total de: "+Contador.x+" Registros");
 			    		    		fw.close();
+			    		    		System.out.println("el proceso lleva procesado un total de: "+Contador.x+" Registros");
 			    				}
 			        			}
 			        		}

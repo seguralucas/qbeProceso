@@ -1,5 +1,5 @@
 package exit.services.json;
 
 public enum TipoTarea {
-	UPDATE, INSERTAR;
+	UPDATE, INSERTAR, DELETE;
 }
