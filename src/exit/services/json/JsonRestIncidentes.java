@@ -1,6 +1,7 @@
 package exit.services.json;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.json.simple.JSONArray;
 
@@ -31,8 +32,10 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 	private JSONHandler json;
 	private String pathError;
 	HashMap<String, Integer> mapEstado;
-	public static HashMap<String, Long> mapTipoIncidente= new HashMap<String,Long>();;
-	public static HashMap<String, Long> mapModoContacto=new HashMap<String,Long>();;
+	public static HashMap<String, Long> mapTipoIncidente= new HashMap<String,Long>();
+	public static HashMap<String, Long> mapModoContacto=new HashMap<String,Long>();
+	
+	public static HashSet<Integer> hashEstados= new HashSet<Integer>();
 	public JsonRestIncidentes(String pathError){
 		this.pathError=pathError;
 		mapEstado = new HashMap<String,Integer>();
@@ -52,6 +55,22 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 		mapEstado.put("INGRESADO", 1);
 		mapEstado.put("RESPUESTA DE CLIENTE", 8);
 		mapEstado.put("INCORRECTO / INCOMPLETO", 3);
+		
+		hashEstados.add(106);
+		hashEstados.add(107);
+		hashEstados.add(108);
+		hashEstados.add(109);
+		hashEstados.add(113);
+		hashEstados.add(114);
+		hashEstados.add(115);
+		hashEstados.add(116);
+		hashEstados.add(117);
+		hashEstados.add(118);
+		hashEstados.add(112);
+		hashEstados.add(2);
+		hashEstados.add(1);
+		hashEstados.add(8);
+		hashEstados.add(3);
 	}
 	
 	@Override
@@ -106,10 +125,10 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 					count++;
 				}
 				if(insertarString(this.getCausa())!=null && !insertarString(this.getCausa()).toUpperCase().equalsIgnoreCase(SIN_VALOR)){
-					if(mapTipoIncidente.get(this.getCausa().toUpperCase().trim())!=null){
-						Long valor=mapTipoIncidente.get(this.getCausa().toUpperCase().trim());
+					HashSet<Long> idTipoIncidente=  new HashSet<Long>(mapTipoIncidente.values());
+					if(idTipoIncidente.contains(Long.parseLong(this.getCausa().trim()))){
 						JSONHandler tipoIncidente = new JSONHandler();
-						tipoIncidente.put("ID", valor);
+						tipoIncidente.put("ID", Long.parseLong(this.getCausa().trim()));
 						jsonQbe.put("TipoIncidente", tipoIncidente);
 						count++;
 					}
@@ -117,10 +136,10 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 						throw new ExceptionTipoIncidenteInvalido("El tipo de incidente de la estructura no es valido");
 				}
 				if(insertarString(this.getModo_contacto())!=null && !insertarString(this.getModo_contacto()).toUpperCase().equalsIgnoreCase(SIN_VALOR)){
-					if(mapModoContacto.get(this.getModo_contacto().toUpperCase().trim())!=null){
-						Long valor=mapModoContacto.get(this.getModo_contacto().toUpperCase().trim());
+					HashSet<Long> idModoContacto=  new HashSet<Long>(mapModoContacto.values());
+					if(idModoContacto.contains(Long.parseLong(this.getModo_contacto().trim()))){
 						JSONHandler modoContacto = new JSONHandler();
-						modoContacto.put("ID", valor);
+						modoContacto.put("ID", Long.parseLong(this.getModo_contacto().trim()));
 						jsonQbe.put("ModoContacto", modoContacto);
 						count++;
 					}
@@ -138,7 +157,7 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 	private void insertarProducto(TipoTarea tarea){
 		if(tarea==TipoTarea.INSERTAR){
 			JSONHandler product = new JSONHandler();
-			product.put("lookupName", this.getProducto());
+			product.put("id", Integer.parseInt(this.getProducto()));
 			this.json.put("product", product);
 		}
 	}
@@ -147,11 +166,10 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 
 		if(tarea==TipoTarea.INSERTAR){
 			if(insertarString(this.getEstado())!=null && !insertarString(this.getEstado()).toUpperCase().equalsIgnoreCase(SIN_VALOR)){
-				if(mapEstado.get(this.getEstado().toUpperCase().trim())!=null){
-					Integer valor=mapEstado.get(this.getEstado().toUpperCase().trim());
+				if(hashEstados.contains(Integer.parseInt(this.getEstado().trim()))){
 					JSONHandler statusWithType = new JSONHandler();
 					JSONHandler status= new JSONHandler();
-						status.put("id", valor);
+						status.put("id", Integer.parseInt(this.getEstado().trim()));
 					statusWithType.put("status", status);
 					json.put("statusWithType", statusWithType);
 				}
@@ -183,7 +201,7 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 			return;
 		if(tarea==TipoTarea.INSERTAR){
 			JSONHandler product = new JSONHandler();
-			product.put("lookupName", this.getMotivo());
+			product.put("id",  Integer.parseInt(this.getMotivo()));
 			this.json.put("category", product);		
 			}		
 	}
@@ -192,7 +210,7 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 			return;
 		if(tarea==TipoTarea.INSERTAR){
 			JSONHandler product = new JSONHandler();
-			product.put("lookupName", this.getSector_responsable());
+			product.put("id",  Integer.parseInt(this.getSector_responsable()));
 			this.json.put("queue", product);		
 			}		
 	}

@@ -22,6 +22,7 @@ import org.w3c.dom.NodeList;
 
 import com.csvreader.CsvWriter;
 
+import Decoder.BASE64Encoder;
 import exit.services.fileHandler.CSVHandler;
 import exit.services.json.JSONHandler;
 import exit.services.parser.ParserXMLWSConnector;
@@ -112,7 +113,8 @@ public class TestSoap {
 		//	conn.setRequestProperty("charset", "UTF-8");
 			conn.setDoOutput(true);
 			String userPassword = ParserXMLWSConnector.getInstance().getUser() + ":" + ParserXMLWSConnector.getInstance().getPassword();
-			String encoding = new sun.misc.BASE64Encoder().encode(userPassword.getBytes());
+			BASE64Encoder encode= new BASE64Encoder();
+			String encoding = encode.encode(userPassword.getBytes());
 		//	conn.setRequestProperty("Authorization", "Basic " + encoding);	 
 		//	conn.setRequestProperty("OSvC-CREST-Suppress-All", "true");	 
 			this.conexion= conn;

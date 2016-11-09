@@ -5,6 +5,8 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
+
+import Decoder.BASE64Encoder;
 import exit.services.parser.ParserXMLWSConnector;
 
 
@@ -50,7 +52,8 @@ public class WSConector {
 		conn.setRequestProperty("charset", "UTF-8");
 		conn.setDoOutput(true);
 		String userPassword = ParserXMLWSConnector.getInstance().getUser() + ":" + ParserXMLWSConnector.getInstance().getPassword();
-		String encoding = new sun.misc.BASE64Encoder().encode(userPassword.getBytes());
+		BASE64Encoder encode= new BASE64Encoder();
+		String encoding = encode.encode(userPassword.getBytes());
 		conn.setRequestProperty("Authorization", "Basic " + encoding);	 
 		conn.setRequestProperty("OSvC-CREST-Suppress-All", "true");	 
 		this.conexion= conn;
