@@ -47,6 +47,9 @@ public class WSConector {
 		else if(method.equalsIgnoreCase("GET")){
 			conn.setRequestMethod("GET");
 		}
+		else if(method.equalsIgnoreCase("DELETE")){
+			conn.setRequestMethod("DELETE");
+		}
 		if(contentType!=null)
 			conn.setRequestProperty("Content-Type", contentType);
 		conn.setRequestProperty("charset", "UTF-8");

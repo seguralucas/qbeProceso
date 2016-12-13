@@ -7,6 +7,7 @@ import org.json.simple.JSONArray;
 
 import com.sun.jersey.api.ParamException;
 
+import exit.services.excepciones.ExceptionAnioInvalido;
 import exit.services.excepciones.ExceptionEstadoInvalido;
 import exit.services.excepciones.ExceptionIDNoNumerico;
 import exit.services.excepciones.ExceptionIDNullIncidente;
@@ -16,6 +17,7 @@ import exit.services.excepciones.ExceptionTipoIncidenteInvalido;
 
 public class JsonRestIncidentes implements IJsonRestEstructura{
 	private static final String SIN_VALOR="SIN VALOR";
+	private static final String NULL="NULL";
 	/******************************************************/
 	private String id;
 	private String nro_sac;
@@ -24,9 +26,12 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 	private String producto;
 	private String estado;
 	private String motivo;
+	private String anio;
 	private String sector_responsable;
 	private String hilo_conversacion;
-	private String hilo_conversacion_antiguo;
+	private String hilo1;
+	private String hilo2;
+	//private String hilo_conversacion_antiguo;
 	/***********************************************/
 	private String line;
 	private JSONHandler json;
@@ -74,7 +79,7 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 	}
 	
 	@Override
-	public JSONHandler createJson(TipoTarea tarea) throws ExceptionEstadoInvalido, ExceptionTipoIncidenteInvalido, ExceptionIDNullIncidente, ExceptionModoContactoInvalido, ExceptionIDNoNumerico{
+	public JSONHandler createJson(TipoTarea tarea) throws ExceptionEstadoInvalido, ExceptionTipoIncidenteInvalido, ExceptionIDNullIncidente, ExceptionModoContactoInvalido, ExceptionIDNoNumerico, ExceptionAnioInvalido{
 		json= new JSONHandler();
 		insertarPrimaryContact(tarea);
 		insertarSubject(tarea);
@@ -115,7 +120,7 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 	}
 
 	
-	private void insertarQBE(TipoTarea tarea) throws ExceptionTipoIncidenteInvalido, ExceptionModoContactoInvalido{
+	private void insertarQBE(TipoTarea tarea) throws ExceptionTipoIncidenteInvalido, ExceptionModoContactoInvalido, ExceptionAnioInvalido{
 			JSONHandler jsonCustomFields = new JSONHandler();
 			JSONHandler jsonQbe = new JSONHandler();
 			int count=0;
@@ -124,7 +129,7 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 					jsonQbe.put("NumeroQbe", insertarString(this.getNro_sac()));
 					count++;
 				}
-				if(insertarString(this.getCausa())!=null && !insertarString(this.getCausa()).toUpperCase().equalsIgnoreCase(SIN_VALOR)){
+				if(insertarString(this.getCausa())!=null && !esSinValor(this.getCausa())){
 					HashSet<Long> idTipoIncidente=  new HashSet<Long>(mapTipoIncidente.values());
 					if(idTipoIncidente.contains(Long.parseLong(this.getCausa().trim()))){
 						JSONHandler tipoIncidente = new JSONHandler();
@@ -135,7 +140,7 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 					else 
 						throw new ExceptionTipoIncidenteInvalido("El tipo de incidente de la estructura no es valido");
 				}
-				if(insertarString(this.getModo_contacto())!=null && !insertarString(this.getModo_contacto()).toUpperCase().equalsIgnoreCase(SIN_VALOR)){
+				if(insertarString(this.getModo_contacto())!=null && !esSinValor(this.getModo_contacto())){
 					HashSet<Long> idModoContacto=  new HashSet<Long>(mapModoContacto.values());
 					if(idModoContacto.contains(Long.parseLong(this.getModo_contacto().trim()))){
 						JSONHandler modoContacto = new JSONHandler();
@@ -146,6 +151,12 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 					else 
 						throw new ExceptionModoContactoInvalido("El tipo de incidente de la estructura no es valido");
 				}
+				if(insertarString(this.anio)!=null && !esSinValor(this.anio) && this.anio.matches("[0-9][0-9][0-9][0-9]")){
+					jsonQbe.put("anio", this.anio);
+				}
+				else
+					throw new ExceptionAnioInvalido("El tipo de incidente de la estructura no es valido");
+
 			}
 			if(count!=0){
 				jsonCustomFields.put("Qbe", jsonQbe);
@@ -161,11 +172,15 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 			this.json.put("product", product);
 		}
 	}
+	
+	private boolean esSinValor(String valor){
+		return valor==null || valor.equalsIgnoreCase(SIN_VALOR) || valor.equalsIgnoreCase(NULL);
+	}
 
 	private void insertarEstado(TipoTarea tarea) throws ExceptionEstadoInvalido{
 
 		if(tarea==TipoTarea.INSERTAR){
-			if(insertarString(this.getEstado())!=null && !insertarString(this.getEstado()).toUpperCase().equalsIgnoreCase(SIN_VALOR)){
+			if(insertarString(this.getEstado())!=null && !esSinValor(this.getEstado())){
 				if(hashEstados.contains(Integer.parseInt(this.getEstado().trim()))){
 					JSONHandler statusWithType = new JSONHandler();
 					JSONHandler status= new JSONHandler();
@@ -197,7 +212,7 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 	}	
 	
 	private void insertarMotivo(TipoTarea tarea ){
-		if(this.getMotivo().equalsIgnoreCase(SIN_VALOR) || this.getMotivo().trim().length()==0)
+		if(esSinValor(this.getMotivo()) || this.getMotivo().trim().length()==0)
 			return;
 		if(tarea==TipoTarea.INSERTAR){
 			JSONHandler product = new JSONHandler();
@@ -206,7 +221,7 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 			}		
 	}
 	private void insertarSectorResponsable(TipoTarea tarea ){
-		if(this.getSector_responsable().equalsIgnoreCase(SIN_VALOR) || this.getMotivo().trim().length()==0)
+		if(esSinValor(this.getSector_responsable())  || this.getSector_responsable().trim().length()==0)
 			return;
 		if(tarea==TipoTarea.INSERTAR){
 			JSONHandler product = new JSONHandler();
@@ -268,18 +283,23 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 	}
 	public void setHilo_conversacion(String hilo_conversacion) {
 		this.hilo_conversacion = hilo_conversacion.replaceAll("#\\|", "\n");
-		this.hilo_conversacion_antiguo=hilo_conversacion;
 
 	}
 	
-	
-	
-	public String getHilo_conversacion_antiguo() {
-		return hilo_conversacion_antiguo;
+	public String getHilo1() {
+		return hilo1;
 	}
 
-	public void setHilo_conversacion_antiguo(String hilo_conversacion_antiguo) {
-		this.hilo_conversacion_antiguo = hilo_conversacion_antiguo;
+	public void setHilo1(String hilo1) {
+		this.hilo1 = hilo1;
+	}
+
+	public String getHilo2() {
+		return hilo2;
+	}
+
+	public void setHilo2(String hilo2) {
+		this.hilo2 = hilo2;
 	}
 
 	@Override
@@ -293,6 +313,14 @@ public class JsonRestIncidentes implements IJsonRestEstructura{
 	@Override
 	public void setLine(String line) {
 		this.line=line;
+	}
+
+	public String getAnio() {
+		return anio;
+	}
+
+	public void setAnio(String anio) {
+		this.anio = anio;
 	}
 	
 	

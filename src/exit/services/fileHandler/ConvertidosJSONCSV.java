@@ -155,7 +155,7 @@ public class ConvertidosJSONCSV {
 		  	    			JsonRestIncidentes jsonEstructura=crearJsonIncidente(valoresCsv,CSVHandler.cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX()));
 		  	    			this.listaJson.add(jsonEstructura);
 		  	    		}
-		  	    		if(tipo_json==Tipo_Json.DELETEINCIDENTE){
+		  	    		else if(tipo_json==Tipo_Json.DELETEINCIDENTE){
 		  	    			JsonRestIncidenteDelete jsonEstructura=crearJsonIncidenteDelete(valoresCsv,CSVHandler.cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX()));
 		  	    			this.listaJson.add(jsonEstructura);
 		  	    		}
@@ -226,9 +226,10 @@ public class ConvertidosJSONCSV {
 	   				case "MOTIVO": jsonEstructura.setMotivo(valoresCsv[i]); break;				
 	   				case "ESTADO": jsonEstructura.setEstado(valoresCsv[i]); break;				
 	   				case "SECTOR_RESPONSABLE": jsonEstructura.setSector_responsable(valoresCsv[i]); break;				
-	   				case "HILO1": sb.append(valoresCsv[i]); break;				
-	   				case "HILO2": sb.append(valoresCsv[i]); break;				
-					}
+	   				case "HILO1": jsonEstructura.setHilo1(valoresCsv[i]); sb.append(valoresCsv[i]); break;				
+	   				case "HILO2": jsonEstructura.setHilo2(valoresCsv[i]); sb.append(valoresCsv[i]); break;				
+	   				case "ANIO": jsonEstructura.setAnio(valoresCsv[i]); break;				
+				}
 			}
 				jsonEstructura.setHilo_conversacion(sb.toString());
 

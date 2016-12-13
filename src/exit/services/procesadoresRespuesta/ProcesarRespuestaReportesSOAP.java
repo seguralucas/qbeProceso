@@ -22,6 +22,7 @@ import org.w3c.dom.NodeList;
 
 import com.csvreader.CsvWriter;
 
+import TESTSOAP.PropiedadReporteSOAP;
 import exit.services.parser.ParserXMLWSConnector;
 import exit.services.principal.DirectorioManager;
 import exit.services.principal.Separadores;
@@ -38,10 +39,13 @@ public class ProcesarRespuestaReportesSOAP implements IProcesarRespuestaSOAP{
 
 		StringBuilder xml= new StringBuilder();
 		String linea;
-		while((linea=in.readLine())!=null)
-			xml.append(linea);		 
 		FileWriter fw=new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio("resultadoConsulta.xml"), true);
-				fw.write(xml.toString());
+
+		while((linea=in.readLine())!=null){
+			xml.append(linea);		
+			fw.write(linea+"\n");
+		}
+		fw.close();
 		  try {	
 		        InputStream stream = new ByteArrayInputStream(xml.toString().getBytes(StandardCharsets.UTF_8));
 		        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -60,7 +64,11 @@ public class ProcesarRespuestaReportesSOAP implements IProcesarRespuestaSOAP{
 					 escribirCSV("reporte.csv",valoresReporte);
 			     }*/
 			    // BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(DirectorioManager.getDirectorioFechaYHoraInicio("reporte.csv")),"windows-1252"));
-			     OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(DirectorioManager.getDirectorioFechaYHoraInicio("reporte.csv"), true));
+			     OutputStreamWriter writer;
+			     if(PropiedadReporteSOAP.getInstance().getIsUtf8().equalsIgnoreCase("SI"))
+			    	 writer = new OutputStreamWriter(new FileOutputStream(DirectorioManager.getDirectorioFechaYHoraInicio("reporte.csv"), true),Charset.forName("UTF-8").newEncoder() );
+			     else
+			    	 writer = new OutputStreamWriter(new FileOutputStream(DirectorioManager.getDirectorioFechaYHoraInicio("reporte.csv"), true));
 			     String cabeceras= eElement.getElementsByTagName("n0:Columns")
 			          .item(0)
 			          .getFirstChild().getNodeValue().replace(',',';');

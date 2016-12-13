@@ -11,6 +11,7 @@ import org.json.simple.JSONArray;
 
 import com.csvreader.CsvWriter;
 
+import exit.services.json.EstructuraGetIdRightNow;
 import exit.services.json.JSONHandler;
 import exit.services.json.JsonRestIncidentes;
 import exit.services.parser.ParserXMLWSConnector;
@@ -21,9 +22,12 @@ public class CSVHandler {
 	
 	public static String cabecera;
 	public static final String PATH_ERROR_SERVER_NO_ALCANZADO="servidor_no_alcanzado.csv";
+	public static final String PATH_SAC_EXISTENTE="sac_existente_services.csv";
 	public static final String LOG_ERROR_FETCH_TIPO_INCIDENTE="error_fetch_tipo_incidente.txt";
 	public static final String PATH_ERROR_EXCEPTION="exception_ejecucion.csv";
+	public static final String PATH_ID_NO_ENCONTRADO="id_no_encontrado.csv";
 	public static final String PATH_ERROR_EXCEPTION_LOG="exception_ejecucion_log.txt";
+	public static final String NRO_SAC_REPETIDO_EN_EL_CSV_EJECUTADO="nro_sac_repetido_en_el_csv_ejecutado.csv";
 	
 		private void crearCabecer(CsvWriter csvOutput) throws IOException{
 			String[] campos= cabecera.split(ParserXMLWSConnector.getInstance().getSeparadorCSVREGEX());
@@ -142,10 +146,33 @@ public class CSVHandler {
 	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getMotivo()));
 	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getEstado()));
 	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getSector_responsable()));
-	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getHilo_conversacion_antiguo()));
+	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getHilo1()));
+	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getHilo2()));
+	         csvOutput.write(insertarNoNull(jsonRestIncidentes.getAnio()));
 	         csvOutput.endRecord();
 	         csvOutput.close();	      
 		 }
+	 
+	 public void escribirCSVGetIdRightNow(EstructuraGetIdRightNow estructuraGetIdRightNow) throws IOException{
+		 	CsvWriter csvOutput = new CsvWriter(new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio("registros_id_nuevos.csv"), true), ParserXMLWSConnector.getInstance().getSeparadorCSV().charAt(0));
+	        File aux = DirectorioManager.getDirectorioFechaYHoraInicio("registros_id_nuevos.csv");
+	        if(!aux.exists() || aux.length() == 0)
+	        	crearCabecerInsercionIncidente(csvOutput);
+	         csvOutput.write(insertarNoNull(estructuraGetIdRightNow.getId()));        
+	         csvOutput.write(insertarNoNull(estructuraGetIdRightNow.getNroSac()));  
+	         csvOutput.write(insertarNoNull(estructuraGetIdRightNow.getModoContacto()));
+	         csvOutput.write(insertarNoNull(estructuraGetIdRightNow.getCausa()));
+	         csvOutput.write(insertarNoNull(estructuraGetIdRightNow.getProducto()));
+	         csvOutput.write(insertarNoNull(estructuraGetIdRightNow.getMotivo()));
+	         csvOutput.write(insertarNoNull(estructuraGetIdRightNow.getEstado()));
+	         csvOutput.write(insertarNoNull(estructuraGetIdRightNow.getSector_responsable()));
+	         csvOutput.write(insertarNoNull(estructuraGetIdRightNow.getHilo1()));
+	         csvOutput.write(insertarNoNull(estructuraGetIdRightNow.getHilo2()));
+	         csvOutput.endRecord();
+	         csvOutput.close();	      
+	 }
+	 
+	 
 		 private void insertarEmails(JSONArray emails, CsvWriter csvOutput) throws IOException{
 	    	 String email1=null;
 	    	 String email2=null;
@@ -248,7 +275,7 @@ public class CSVHandler {
 			}
 			
 			private void crearCabecerInsercionIncidente(CsvWriter csvOutput) throws IOException{
-				String [] cabeceras= {"ID_RIGHTNOW","LOOKUPNAME","ID","NRO_SAC","MODO_CONTACTO","CAUSA","PRODUCTO","MOTIVO","ESTADO","SECTOR_RESPONSABLE","HILO_CONVERSACION"};
+				String [] cabeceras= {"ID_RIGHTNOW","LOOKUPNAME","ID","NRO_SAC","MODO_CONTACTO","CAUSA","PRODUCTO","MOTIVO","ESTADO","SECTOR_RESPONSABLE","HILO1","HILO2","ANIO"};
 				for(int i=0;i<cabeceras.length;i++)
 					csvOutput.write(cabeceras[i]);
 		        csvOutput.endRecord();

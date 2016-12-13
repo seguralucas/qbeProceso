@@ -11,6 +11,7 @@ public class PropiedadReporteSOAP {
 	private String IP;
 	private String puerto;
 	private String pathSalida;
+	private String isUtf8;
 	private static PropiedadReporteSOAP instance;
     private PropiedadReporteSOAP() throws IOException{
         Properties props = new Properties();
@@ -20,6 +21,7 @@ public class PropiedadReporteSOAP {
 		IP=props.getProperty("IP");
 		puerto=props.getProperty("Puerto");
 		pathSalida=props.getProperty("PathSalida");
+		isUtf8=props.getProperty("UTF-8");
     }
     
     public static synchronized PropiedadReporteSOAP getInstance() throws IOException{
@@ -59,6 +61,16 @@ public class PropiedadReporteSOAP {
 	public void setPuerto(String puerto) {
 		this.puerto = puerto;
 	}
+
+	public String getIsUtf8() {
+		return isUtf8;
+	}
+
+	public void setIsUtf8(String isUtf8) {
+		this.isUtf8 = isUtf8;
+	}
+	
+	
     
     
     

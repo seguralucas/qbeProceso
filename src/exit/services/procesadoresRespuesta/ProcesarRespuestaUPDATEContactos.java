@@ -83,7 +83,7 @@ public class ProcesarRespuestaUPDATEContactos implements IProcesarRespuestaREST{
 		JSONHandler qbe = (JSONHandler)((JSONHandler)json.get("customFields")).get("Qbe");
 		 String clientSec=(String)qbe.get("IdBI");
 		System.out.println(id+"");
-		//realizarPeticion(json,String.valueOf(id));
+		realizarPeticion(json,String.valueOf(id));
 	}
 
 	@Override

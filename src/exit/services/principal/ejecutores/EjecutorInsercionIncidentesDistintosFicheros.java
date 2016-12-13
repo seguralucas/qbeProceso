@@ -12,6 +12,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.sun.jersey.spi.StringReader.ValidateDefaultValue;
+
+import exit.services.excepciones.ExceptionAnioInvalido;
 import exit.services.excepciones.ExceptionEstadoInvalido;
 import exit.services.excepciones.ExceptionIDNoNumerico;
 import exit.services.excepciones.ExceptionIDNullIncidente;
@@ -33,6 +36,7 @@ import exit.services.principal.Principal;
 import exit.services.principal.peticiones.FetchMapeos;
 import exit.services.principal.peticiones.InsertarIncidente;
 import exit.services.principal.peticiones.UpdatearContacto;
+import exit.services.principal.peticiones.VerificarSAC;
 import exit.services.util.Contador;
 public class EjecutorInsercionIncidentesDistintosFicheros {
 	public static int y=0;
@@ -42,7 +46,7 @@ public class EjecutorInsercionIncidentesDistintosFicheros {
 	 	ArrayList<File> pathsCSVEjecutar= FilesAProcesarManager.getInstance().getCSVAProcesar(ParserXMLWSConnector.getInstance().getPathCSVRegistros());
 	 	for(File path:pathsCSVEjecutar){
 		 	try {
-				DirectorioManager.SepararFicheros(path);
+				DirectorioManager.SepararFicherosSinSacsRepetidos(path);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -76,13 +80,11 @@ public class EjecutorInsercionIncidentesDistintosFicheros {
 				        		boolean excepcion=false;
 				        		boolean excepcionGenerica=false;
 			        			jsonEst = csvThread.convertirCSVaArrayListJSONLineaALineaIncidentes(file);
-			        			InsertarIncidente insertar= new InsertarIncidente();
-
+			        			VerificarSAC verificar= new VerificarSAC();
 			        			if(jsonEst!=null){
 								try{
 									
 										jsonH=jsonEst.createJson(TipoTarea.INSERTAR);
-										System.out.println(jsonH);
 								}
 								catch(ExceptionEstadoInvalido e){
 									excepcion=true;
@@ -108,7 +110,12 @@ public class EjecutorInsercionIncidentesDistintosFicheros {
 									excepcion=true;
 									CSVHandler manejadorCSV = new CSVHandler();
 									manejadorCSV.escribirCSVERRORLongitud("error_id_no_numerico.csv", jsonEst.getLine());
-								}					
+								}				
+								catch(ExceptionAnioInvalido e){
+									excepcion=true;
+									CSVHandler manejadorCSV = new CSVHandler();
+									manejadorCSV.escribirCSVERRORLongitud("error_anio_invalido.csv", jsonEst.getLine());									
+								}
 								catch(Exception e){
 									excepcion=true;
 									excepcionGenerica=true;
@@ -118,7 +125,7 @@ public class EjecutorInsercionIncidentesDistintosFicheros {
 								
 								if(!excepcion){
 									try{
-										insertar.realizarPeticion(jsonH);
+										 verificar.realizarPeticion(jsonH);
 									}
 									catch(Exception e){
 										CSVHandler csv= new CSVHandler();
@@ -135,6 +142,7 @@ public class EjecutorInsercionIncidentesDistintosFicheros {
 									manejadorCSV.escribirCSVERRORLongitud("error_generico.csv", jsonEst.getLine());
 								}								
 			    				Contador.x++;
+			    				System.out.println(Contador.x);
 			    				if(Contador.x%1000==0){
 			    			  		FileWriter fw = new FileWriter(DirectorioManager.getDirectorioFechaYHoraInicio("cantidadProcesada.txt"));
 			    		    		fw.write("el proceso lleva procesado un total de: "+Contador.x+" Registros");

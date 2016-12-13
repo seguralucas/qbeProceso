@@ -6,13 +6,16 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
 import exit.services.fileHandler.FilesAProcesarManager;
+import exit.services.json.EstructuraGetIdRightNow;
 import exit.services.parser.ParserXMLWSConnector;
 import exit.services.principal.ejecutores.EjecutorBorradoIncidentes;
 import exit.services.principal.ejecutores.EjecutorInsercionContactos;
 import exit.services.principal.ejecutores.EjecutorInsercionIncidentes;
 import exit.services.principal.ejecutores.EjecutorInsercionIncidentesDistintosFicheros;
 import exit.services.principal.ejecutores.EjecutorUpdateContactosDistintosFicheros;
+import exit.services.principal.getid.ProcesarGetID;
 import exit.services.principal.peticiones.FetchMapeos;
+import exit.services.principal.peticiones.PeticionGetIdRightNow;
 
 public class Principal {
 	public static final String UPDATE_CONTACTOS="UPDATE_CONTACTOS";
@@ -37,6 +40,23 @@ public class Principal {
         	System.out.println("IP Proxy: "+ParserXMLWSConnector.getInstance().getIpProxy());
     		System.out.println("Puerto Proxy: "+ParserXMLWSConnector.getInstance().getPuertoProxy());
     	}
+    	
+    	if(args.length>0 && args[0].equalsIgnoreCase("getId")){
+    		ProcesarGetID pgi= new ProcesarGetID();
+    		int i=0;
+    		while(!pgi.isFin()){
+    			i++;
+    			System.out.println(i);
+    			EstructuraGetIdRightNow gir=pgi.procesarFichero();
+    			if(gir!=null){
+    				PeticionGetIdRightNow peticionGetIdRightNow = new PeticionGetIdRightNow();
+    				peticionGetIdRightNow.realizarPeticion(gir);
+    			}
+    		}
+    		System.out.println("Finalizado...");
+    		return;
+    	}
+    	
     	if(ParserXMLWSConnector.getInstance().getAcction().equalsIgnoreCase(UPDATE_CONTACTOS)){
 	    	EjecutorUpdateContactosDistintosFicheros ejecutoUpdateContactos = new EjecutorUpdateContactosDistintosFicheros();
 	    	try {
@@ -55,7 +75,7 @@ public class Principal {
     	}
     	else if(ParserXMLWSConnector.getInstance().getAcction().equalsIgnoreCase(INSERTAR_CONTACTOS)){
 	    	EjecutorInsercionContactos hiloApartre = new EjecutorInsercionContactos();
-	    //	hiloApartre.start();
+	    	hiloApartre.start();
 	        synchronized(hiloApartre){
 	            try{
 	                hiloApartre.wait();
@@ -106,9 +126,6 @@ public class Principal {
 		//***Borrar ficheros de ejecucion***/
 /***********************************************************/
 		FilesAProcesarManager.getInstance().deleteCSVAProcesar();
-
-		
-
 	}
 
 }
