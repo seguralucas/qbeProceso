@@ -1,0 +1,88 @@
+package TESTSOAP;
+
+import java.util.Properties;
+
+public class PropiedadReporteSOAP
+{
+  private String IDReporte;
+  private String usaProxy;
+  private String IP;
+  private String puerto;
+  private String eliminarColumnas;
+  private String isUtf8;
+  private String url;
+  private static PropiedadReporteSOAP instance;
+  
+  private PropiedadReporteSOAP() throws java.io.IOException
+  {
+    Properties props = new Properties();
+    props.load(new java.io.FileReader("WebContent/configuracionREST.properties"));
+    IDReporte = props.getProperty("IDReporte");
+    usaProxy = props.getProperty("UsaProxy");
+    IP = props.getProperty("IP");
+    puerto = props.getProperty("Puerto");
+    eliminarColumnas = props.getProperty("EliminarColumnas");
+    isUtf8 = props.getProperty("UTF-8");
+    url = props.getProperty("Url");
+  }
+  
+  public static synchronized PropiedadReporteSOAP getInstance() throws java.io.IOException {
+    if (instance == null)
+      instance = new PropiedadReporteSOAP();
+    return instance;
+  }
+  
+  public int getIDReporte() {
+    return Integer.parseInt(IDReporte);
+  }
+  
+  public void setIDReporte(String iDReporte) {
+    IDReporte = iDReporte;
+  }
+  
+  public String getUsaProxy() {
+    return usaProxy;
+  }
+  
+  public void setUsaProxy(String usaProxy) {
+    this.usaProxy = usaProxy;
+  }
+  
+  public String getIP() {
+    return IP;
+  }
+  
+  public void setIP(String iP) {
+    IP = iP;
+  }
+  
+  public String getPuerto() {
+    return puerto;
+  }
+  
+  public void setPuerto(String puerto) {
+    this.puerto = puerto;
+  }
+  
+  public String getIsUtf8() {
+    return isUtf8;
+  }
+  
+  public void setIsUtf8(String isUtf8) {
+    this.isUtf8 = isUtf8;
+  }
+  
+  public String getEliminarColumnas() {
+    return eliminarColumnas;
+  }
+
+  public String getUrl() {
+		return url;
+  }
+	
+  public void setUrl(String url) {
+		this.url = url;
+  }
+  
+  
+}

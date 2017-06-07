@@ -1,0 +1,60 @@
+package TESTSOAP;
+
+import exit.services.fileHandler.CSVHandler;
+import exit.services.json.JSONHandler;
+import exit.services.procesadoresRespuesta.IProcesarRespuestaREST;
+import exit.services.procesadoresRespuesta.ProcesarRespuestaReporteRest;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+
+
+public class AutomatizadorRest
+{
+  public AutomatizadorRest() {}
+  
+  public static boolean esFin = false;
+  
+  public static void main(String[] args) throws IOException {
+    PropiedadReporteREST prs = PropiedadReporteREST.getInstance();
+    int offset = 0;
+    while (!esFin) {
+      try {
+        TestSoap ts = new TestSoap("POST", prs.getUrl());
+        HttpURLConnection conn = ts.getConexion();
+        IProcesarRespuestaREST procesarRespuestaSOAP = new ProcesarRespuestaReporteRest();
+        DataOutputStream wr = new DataOutputStream(
+          conn.getOutputStream());
+        JSONHandler json = new JSONHandler();
+        json.put("id", Integer.valueOf(prs.getIDReporte()));
+        json.put("offset", Integer.valueOf(offset));
+        wr.write(json.toJSONString().getBytes("UTF-8"));
+        wr.flush();
+        wr.flush();
+        wr.close();
+        int responseCode = conn.getResponseCode();
+        
+        if (responseCode == 200) {
+          BufferedReader in = new BufferedReader(
+            new InputStreamReader(conn.getInputStream()));
+          procesarRespuestaSOAP.procesarPeticionOK(in, json, responseCode);
+        }
+        else {
+          BufferedReader in = new BufferedReader(
+            new InputStreamReader(conn.getErrorStream()));
+          procesarRespuestaSOAP.procesarPeticionError(in, json, responseCode);
+          esFin = true;
+        }
+        offset += 10000;
+      }
+      catch (Exception e) {
+        e.printStackTrace();
+        CSVHandler csv = new CSVHandler();
+        csv.escribirErrorException(e.getStackTrace());
+      }
+    }
+  }
+}
