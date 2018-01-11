@@ -4,12 +4,13 @@ import exit.services.fileHandler.CSVHandler;
 import exit.services.json.JSONHandler;
 import exit.services.procesadoresRespuesta.IProcesarRespuestaREST;
 import exit.services.procesadoresRespuesta.ProcesarRespuestaReporteRest;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+
 
 
 public class AutomatizadorRest
@@ -21,6 +22,9 @@ public class AutomatizadorRest
   public static void main(String[] args) throws IOException {
     PropiedadReporteREST prs = PropiedadReporteREST.getInstance();
     int offset = 0;
+    File file = new File(PropiedadReporteREST.getInstance().getPathSalida() + "/" + PropiedadReporteREST.getInstance().getNombreSalida());
+    file.delete();
+    
     while (!esFin) {
       try {
         TestSoap ts = new TestSoap("POST", prs.getUrl());
@@ -54,6 +58,7 @@ public class AutomatizadorRest
         e.printStackTrace();
         CSVHandler csv = new CSVHandler();
         csv.escribirErrorException(e.getStackTrace());
+        esFin = true;
       }
     }
   }

@@ -12,6 +12,9 @@ public class PropiedadReporteREST
   private String isUtf8;
   private String url;
   private static PropiedadReporteREST instance;
+  private String[] cabecerasInt;
+  private String nombreSalida;
+  private String pathSalida;
   
   private PropiedadReporteREST() throws java.io.IOException
   {
@@ -24,9 +27,13 @@ public class PropiedadReporteREST
     eliminarColumnas = props.getProperty("EliminarColumnas");
     isUtf8 = props.getProperty("UTF-8");
     url = props.getProperty("Url");
+    cabecerasInt = props.getProperty("cabecerasInt").split(",");
+    nombreSalida = props.getProperty("nombreSalida");
+    pathSalida = props.getProperty("pathSalida");
   }
   
-  public static synchronized PropiedadReporteREST getInstance() throws java.io.IOException {
+  public static synchronized PropiedadReporteREST getInstance() throws java.io.IOException
+  {
     if (instance == null)
       instance = new PropiedadReporteREST();
     return instance;
@@ -75,14 +82,36 @@ public class PropiedadReporteREST
   public String getEliminarColumnas() {
     return eliminarColumnas;
   }
-
+  
   public String getUrl() {
-		return url;
+    return url;
   }
-	
+  
   public void setUrl(String url) {
-		this.url = url;
+    this.url = url;
   }
   
+  public String[] getCabecerasInt() {
+    return cabecerasInt;
+  }
   
+  public void setCabecerasInt(String[] cabecerasInt) {
+    this.cabecerasInt = cabecerasInt;
+  }
+  
+  public String getNombreSalida() {
+    return nombreSalida;
+  }
+  
+  public void setNombreSalida(String nombreSalida) {
+    this.nombreSalida = nombreSalida;
+  }
+  
+  public String getPathSalida() {
+    return pathSalida;
+  }
+  
+  public void setPathSalida(String pathSalida) {
+    this.pathSalida = pathSalida;
+  }
 }
